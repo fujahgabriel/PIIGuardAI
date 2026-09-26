@@ -1,0 +1,700 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00DC94C5F75D334AE5E232A1 /* ActivityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB3AF099314974E4EA4D361 /* ActivityStore.swift */; };
+		032EEA637B5AAA40A4B7F508 /* IdentityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E8C43C015D4C04C666CE8A /* IdentityStore.swift */; };
+		05315905082CCB061512C346 /* TerminalInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D058BFBCC94465FD58154C12 /* TerminalInjector.swift */; };
+		0AEF39861B889A5D90AC2207 /* PrivilegedRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D65D81C6196D1877CCCB3 /* PrivilegedRunner.swift */; };
+		0D5640C2EFDE128B76B9CC81 /* TrustStoreInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352863EA005D1820D0316595 /* TrustStoreInstaller.swift */; };
+		10031D3DBDCB59B65B944C3B /* MITMProxyServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B315EEE2161F3EB36AE1D493 /* MITMProxyServer.swift */; };
+		12CE6CD0ADB8667D782993F1 /* PACFileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9756272C651A6EBBB93714 /* PACFileServer.swift */; };
+		1406F7C91D2B1B1DBF380978 /* ActivityTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFBDAFBEA9EF87525F5E357 /* ActivityTabView.swift */; };
+		1A04828004D34CEF7F22BA88 /* DebugBodyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8FD97D551417CEE1AA21EC /* DebugBodyStore.swift */; };
+		2004A7751B58576E71ECFE5D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E6718AC8F2F611FF9A675C /* SettingsView.swift */; };
+		21D3F73C4D4119E831DCDCB0 /* PIIGuardHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3DF6EC04D689BF704CC5DE /* PIIGuardHelperProtocol.swift */; };
+		22CE443E98E2AA853BECB574 /* BlockEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F382B18B4F5D8039FCD19996 /* BlockEvent.swift */; };
+		250C3E3DDB65FCCF99F027D3 /* SystemProxyConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC88FBD1E953BD3D698DB75 /* SystemProxyConfigurator.swift */; };
+		25CEA4BC1E83B494FB7393C3 /* HelperClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0362D6D49376BC5103BF1E89 /* HelperClient.swift */; };
+		27BB05DCAF462DB6F35E1AD8 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97277F7BDDF1F651D1E7B53A /* AppState.swift */; };
+		2B7C826E1B926829C8544E6D /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = 8C5B69007EA584317D861F01 /* Crypto */; };
+		2CFAC481A2BE9384913B158B /* CustomRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAAF1D578E619AA3C5964FD /* CustomRule.swift */; };
+		2EFCDC0CAA052B2ECEEA3B21 /* X509 in Frameworks */ = {isa = PBXBuildFile; productRef = 404173E704A843D13D84218D /* X509 */; };
+		3945E5C28C937C0DD4A3A473 /* PIIGuardHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3DF6EC04D689BF704CC5DE /* PIIGuardHelperProtocol.swift */; };
+		4774C11B2A3AF4A9CA7EC742 /* PIIGuardAIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEB839D087F97B649ABC1A6 /* PIIGuardAIApp.swift */; };
+		4AD3F62907865F8092A37D43 /* HTTPMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5732444352130F99F0F2C4 /* HTTPMessage.swift */; };
+		6710FF79FD645C61D8B67B19 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A8385A05E3D652EA936D44 /* MenuBarView.swift */; };
+		6799F5FEA2A9FE277D9A12F0 /* CertificateAuthority.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32ED4F90B35E76E6BAC81F /* CertificateAuthority.swift */; };
+		7D0D35DF8561E83929ED4E00 /* PIIGuardHelper in Resources */ = {isa = PBXBuildFile; fileRef = 9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7D3F2D568F18436EC0DA6894 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDAF7373B47CAD6882CC39 /* LoginItemManager.swift */; };
+		7FFCE832FBC72211824DBDD7 /* CLIProxyEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37456D67F741DFA2FBA11B9 /* CLIProxyEnv.swift */; };
+		9019428F799CC48E8FC428B2 /* TLSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C02A52F5C4886E951A3F0F /* TLSSocket.swift */; };
+		912042B5B06440040B8AB77C /* PIIRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AC2066FABC648C14DD9E8F /* PIIRule.swift */; };
+		9DDDDCF4A9D095886D52FBFF /* ProviderDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD82D8E2CFC4EBD60C1C9188 /* ProviderDomain.swift */; };
+		B2344473BE434F8BB4AA7FC8 /* BlockNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D4316FD7CF76113E74F374 /* BlockNotifier.swift */; };
+		C725FDF1249731E8DB408A93 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E29CF855D2F891E2629DBE /* AppDelegate.swift */; };
+		CF05DBABE6B370F0DD6F3DFD /* POSIXSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594293F52D884CB6CA2A0316 /* POSIXSocket.swift */; };
+		DB3B5B27714E6DBB062416C8 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC07EE1BC27B72181B7ABD /* main.swift */; };
+		E6DF49F35D1936FCD4AEA06A /* PIIDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27D2377C51253E17879D4D9 /* PIIDetector.swift */; };
+		EE054E77E1EDF73618937F5C /* AppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C35E8AAC0C7A2ADA68D30F9 /* AppIdentity.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AE2FC8F73EC089D3C9281117 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 285C337E6718B5A3308E63EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07E5EB8CE175CEB79457620D;
+			remoteInfo = PIIGuardHelper;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02AC2066FABC648C14DD9E8F /* PIIRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIRule.swift; sourceTree = "<group>"; };
+		02E29CF855D2F891E2629DBE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0362D6D49376BC5103BF1E89 /* HelperClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperClient.swift; sourceTree = "<group>"; };
+		04E8C43C015D4C04C666CE8A /* IdentityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityStore.swift; sourceTree = "<group>"; };
+		0C32ED4F90B35E76E6BAC81F /* CertificateAuthority.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateAuthority.swift; sourceTree = "<group>"; };
+		1A0D65D81C6196D1877CCCB3 /* PrivilegedRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivilegedRunner.swift; sourceTree = "<group>"; };
+		2B9756272C651A6EBBB93714 /* PACFileServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PACFileServer.swift; sourceTree = "<group>"; };
+		2C35E8AAC0C7A2ADA68D30F9 /* AppIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIdentity.swift; sourceTree = "<group>"; };
+		352863EA005D1820D0316595 /* TrustStoreInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustStoreInstaller.swift; sourceTree = "<group>"; };
+		36C02A52F5C4886E951A3F0F /* TLSSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSSocket.swift; sourceTree = "<group>"; };
+		3E3DF6EC04D689BF704CC5DE /* PIIGuardHelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIGuardHelperProtocol.swift; sourceTree = "<group>"; };
+		594293F52D884CB6CA2A0316 /* POSIXSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POSIXSocket.swift; sourceTree = "<group>"; };
+		5AFBDAFBEA9EF87525F5E357 /* ActivityTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTabView.swift; sourceTree = "<group>"; };
+		5CAAF1D578E619AA3C5964FD /* CustomRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRule.swift; sourceTree = "<group>"; };
+		5D5732444352130F99F0F2C4 /* HTTPMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMessage.swift; sourceTree = "<group>"; };
+		73D4316FD7CF76113E74F374 /* BlockNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockNotifier.swift; sourceTree = "<group>"; };
+		7BB3AF099314974E4EA4D361 /* ActivityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityStore.swift; sourceTree = "<group>"; };
+		7EEB839D087F97B649ABC1A6 /* PIIGuardAIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIGuardAIApp.swift; sourceTree = "<group>"; };
+		97277F7BDDF1F651D1E7B53A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */ = {isa = PBXFileReference; includeInIndex = 0; path = PIIGuardHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		9EBDAF7373B47CAD6882CC39 /* LoginItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemManager.swift; sourceTree = "<group>"; };
+		A27D2377C51253E17879D4D9 /* PIIDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIDetector.swift; sourceTree = "<group>"; };
+		A7E6718AC8F2F611FF9A675C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A8F99DAF3A30B83602418268 /* PIIGuardAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PIIGuardAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B315EEE2161F3EB36AE1D493 /* MITMProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITMProxyServer.swift; sourceTree = "<group>"; };
+		BDC88FBD1E953BD3D698DB75 /* SystemProxyConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemProxyConfigurator.swift; sourceTree = "<group>"; };
+		D058BFBCC94465FD58154C12 /* TerminalInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalInjector.swift; sourceTree = "<group>"; };
+		DD8FD97D551417CEE1AA21EC /* DebugBodyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugBodyStore.swift; sourceTree = "<group>"; };
+		E3A8385A05E3D652EA936D44 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		F2BC07EE1BC27B72181B7ABD /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		F37456D67F741DFA2FBA11B9 /* CLIProxyEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLIProxyEnv.swift; sourceTree = "<group>"; };
+		F382B18B4F5D8039FCD19996 /* BlockEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockEvent.swift; sourceTree = "<group>"; };
+		FD82D8E2CFC4EBD60C1C9188 /* ProviderDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderDomain.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		09CD756F18901ACC5A21380D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EFCDC0CAA052B2ECEEA3B21 /* X509 in Frameworks */,
+				2B7C826E1B926829C8544E6D /* Crypto in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0568810E1F4EB27C83F71335 /* Proxy */ = {
+			isa = PBXGroup;
+			children = (
+				5D5732444352130F99F0F2C4 /* HTTPMessage.swift */,
+				B315EEE2161F3EB36AE1D493 /* MITMProxyServer.swift */,
+				594293F52D884CB6CA2A0316 /* POSIXSocket.swift */,
+				36C02A52F5C4886E951A3F0F /* TLSSocket.swift */,
+			);
+			path = Proxy;
+			sourceTree = "<group>";
+		};
+		132E64524E225695E44C2111 /* System */ = {
+			isa = PBXGroup;
+			children = (
+				F37456D67F741DFA2FBA11B9 /* CLIProxyEnv.swift */,
+				0362D6D49376BC5103BF1E89 /* HelperClient.swift */,
+				9EBDAF7373B47CAD6882CC39 /* LoginItemManager.swift */,
+				2B9756272C651A6EBBB93714 /* PACFileServer.swift */,
+				1A0D65D81C6196D1877CCCB3 /* PrivilegedRunner.swift */,
+				BDC88FBD1E953BD3D698DB75 /* SystemProxyConfigurator.swift */,
+				D058BFBCC94465FD58154C12 /* TerminalInjector.swift */,
+				352863EA005D1820D0316595 /* TrustStoreInstaller.swift */,
+			);
+			path = System;
+			sourceTree = "<group>";
+		};
+		1C583968773C18F55E6E4280 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B04AFEC421012716ED43BA5F /* App */,
+				CADBA41EDB99DE88506997E6 /* Helper */,
+				3F7CC3CB36A702BCF395DCE4 /* HelperShared */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		2EAE4E513F9E3636552AA8ED /* Certificates */ = {
+			isa = PBXGroup;
+			children = (
+				0C32ED4F90B35E76E6BAC81F /* CertificateAuthority.swift */,
+				04E8C43C015D4C04C666CE8A /* IdentityStore.swift */,
+			);
+			path = Certificates;
+			sourceTree = "<group>";
+		};
+		3F7CC3CB36A702BCF395DCE4 /* HelperShared */ = {
+			isa = PBXGroup;
+			children = (
+				3E3DF6EC04D689BF704CC5DE /* PIIGuardHelperProtocol.swift */,
+			);
+			path = HelperShared;
+			sourceTree = "<group>";
+		};
+		4812267396A42F6FAED93E0A /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				73D4316FD7CF76113E74F374 /* BlockNotifier.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		5E0705F2B6B7C3B8366235EE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A8F99DAF3A30B83602418268 /* PIIGuardAI.app */,
+				9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		728EB94FCA47BAAF86596F02 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7BB3AF099314974E4EA4D361 /* ActivityStore.swift */,
+				F382B18B4F5D8039FCD19996 /* BlockEvent.swift */,
+				5CAAF1D578E619AA3C5964FD /* CustomRule.swift */,
+				DD8FD97D551417CEE1AA21EC /* DebugBodyStore.swift */,
+				FD82D8E2CFC4EBD60C1C9188 /* ProviderDomain.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B04AFEC421012716ED43BA5F /* App */ = {
+			isa = PBXGroup;
+			children = (
+				02E29CF855D2F891E2629DBE /* AppDelegate.swift */,
+				2C35E8AAC0C7A2ADA68D30F9 /* AppIdentity.swift */,
+				97277F7BDDF1F651D1E7B53A /* AppState.swift */,
+				7EEB839D087F97B649ABC1A6 /* PIIGuardAIApp.swift */,
+				2EAE4E513F9E3636552AA8ED /* Certificates */,
+				728EB94FCA47BAAF86596F02 /* Models */,
+				4812267396A42F6FAED93E0A /* Notifications */,
+				FA1710BED5F0775F9A66E793 /* PII */,
+				0568810E1F4EB27C83F71335 /* Proxy */,
+				132E64524E225695E44C2111 /* System */,
+				F436B03ED02274ECA9A83AFE /* Views */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		CADBA41EDB99DE88506997E6 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				F2BC07EE1BC27B72181B7ABD /* main.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		D02AAFE80C6447DABC71EEEA = {
+			isa = PBXGroup;
+			children = (
+				1C583968773C18F55E6E4280 /* Sources */,
+				5E0705F2B6B7C3B8366235EE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F436B03ED02274ECA9A83AFE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5AFBDAFBEA9EF87525F5E357 /* ActivityTabView.swift */,
+				E3A8385A05E3D652EA936D44 /* MenuBarView.swift */,
+				A7E6718AC8F2F611FF9A675C /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FA1710BED5F0775F9A66E793 /* PII */ = {
+			isa = PBXGroup;
+			children = (
+				A27D2377C51253E17879D4D9 /* PIIDetector.swift */,
+				02AC2066FABC648C14DD9E8F /* PIIRule.swift */,
+			);
+			path = PII;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		07E5EB8CE175CEB79457620D /* PIIGuardHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 75DE10DCA67B73B840E6BE1A /* Build configuration list for PBXNativeTarget "PIIGuardHelper" */;
+			buildPhases = (
+				9BCBF386FDA0F9D807F9CE6B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PIIGuardHelper;
+			packageProductDependencies = (
+			);
+			productName = PIIGuardHelper;
+			productReference = 9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */;
+			productType = "com.apple.product-type.tool";
+		};
+		2C0D3D7AA40A8C5B8D67FB90 /* PIIGuardAI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0FB6C1B31AB4D25E96DF5BD6 /* Build configuration list for PBXNativeTarget "PIIGuardAI" */;
+			buildPhases = (
+				ACC62DE05ADE47E1E687CC2B /* Sources */,
+				0B4B1B664F6FB44D0393300C /* Resources */,
+				09CD756F18901ACC5A21380D /* Frameworks */,
+				DD1003D50CC5F82E463B0276 /* Embed privileged helper */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B547F4DE12A89660A5EC67D3 /* PBXTargetDependency */,
+			);
+			name = PIIGuardAI;
+			packageProductDependencies = (
+				404173E704A843D13D84218D /* X509 */,
+				8C5B69007EA584317D861F01 /* Crypto */,
+			);
+			productName = PIIGuardAI;
+			productReference = A8F99DAF3A30B83602418268 /* PIIGuardAI.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		285C337E6718B5A3308E63EB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					07E5EB8CE175CEB79457620D = {
+						DevelopmentTeam = "$(PIIGUARD_TEAM_ID)";
+						ProvisioningStyle = Automatic;
+					};
+					2C0D3D7AA40A8C5B8D67FB90 = {
+						DevelopmentTeam = "$(PIIGUARD_TEAM_ID)";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 7774A7B34A298CA3CF6F84AE /* Build configuration list for PBXProject "PIIGuardAI" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D02AAFE80C6447DABC71EEEA;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F1D2500D5822F25317714638 /* XCRemoteSwiftPackageReference "swift-certificates" */,
+				D65B91503E158C7660022FBF /* XCRemoteSwiftPackageReference "swift-crypto" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5E0705F2B6B7C3B8366235EE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2C0D3D7AA40A8C5B8D67FB90 /* PIIGuardAI */,
+				07E5EB8CE175CEB79457620D /* PIIGuardHelper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0B4B1B664F6FB44D0393300C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D0D35DF8561E83929ED4E00 /* PIIGuardHelper in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DD1003D50CC5F82E463B0276 /* Embed privileged helper */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed privileged helper";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nHELPER_ID=\"${PIIGUARD_HELPER_BUNDLE_ID}\"\nSRC=\"${BUILT_PRODUCTS_DIR}/${HELPER_ID}\"\nDEST_DIR=\"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Library/LaunchServices\"\nmkdir -p \"${DEST_DIR}\"\ncp \"${SRC}\" \"${DEST_DIR}/${HELPER_ID}\"\ncodesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY:-$CODE_SIGN_IDENTITY}\" --identifier \"${HELPER_ID}\" \"${DEST_DIR}/${HELPER_ID}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9BCBF386FDA0F9D807F9CE6B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3945E5C28C937C0DD4A3A473 /* PIIGuardHelperProtocol.swift in Sources */,
+				DB3B5B27714E6DBB062416C8 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ACC62DE05ADE47E1E687CC2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00DC94C5F75D334AE5E232A1 /* ActivityStore.swift in Sources */,
+				1406F7C91D2B1B1DBF380978 /* ActivityTabView.swift in Sources */,
+				C725FDF1249731E8DB408A93 /* AppDelegate.swift in Sources */,
+				EE054E77E1EDF73618937F5C /* AppIdentity.swift in Sources */,
+				27BB05DCAF462DB6F35E1AD8 /* AppState.swift in Sources */,
+				22CE443E98E2AA853BECB574 /* BlockEvent.swift in Sources */,
+				B2344473BE434F8BB4AA7FC8 /* BlockNotifier.swift in Sources */,
+				7FFCE832FBC72211824DBDD7 /* CLIProxyEnv.swift in Sources */,
+				6799F5FEA2A9FE277D9A12F0 /* CertificateAuthority.swift in Sources */,
+				2CFAC481A2BE9384913B158B /* CustomRule.swift in Sources */,
+				1A04828004D34CEF7F22BA88 /* DebugBodyStore.swift in Sources */,
+				4AD3F62907865F8092A37D43 /* HTTPMessage.swift in Sources */,
+				25CEA4BC1E83B494FB7393C3 /* HelperClient.swift in Sources */,
+				032EEA637B5AAA40A4B7F508 /* IdentityStore.swift in Sources */,
+				7D3F2D568F18436EC0DA6894 /* LoginItemManager.swift in Sources */,
+				10031D3DBDCB59B65B944C3B /* MITMProxyServer.swift in Sources */,
+				6710FF79FD645C61D8B67B19 /* MenuBarView.swift in Sources */,
+				12CE6CD0ADB8667D782993F1 /* PACFileServer.swift in Sources */,
+				E6DF49F35D1936FCD4AEA06A /* PIIDetector.swift in Sources */,
+				4774C11B2A3AF4A9CA7EC742 /* PIIGuardAIApp.swift in Sources */,
+				21D3F73C4D4119E831DCDCB0 /* PIIGuardHelperProtocol.swift in Sources */,
+				912042B5B06440040B8AB77C /* PIIRule.swift in Sources */,
+				CF05DBABE6B370F0DD6F3DFD /* POSIXSocket.swift in Sources */,
+				0AEF39861B889A5D90AC2207 /* PrivilegedRunner.swift in Sources */,
+				9DDDDCF4A9D095886D52FBFF /* ProviderDomain.swift in Sources */,
+				2004A7751B58576E71ECFE5D /* SettingsView.swift in Sources */,
+				250C3E3DDB65FCCF99F027D3 /* SystemProxyConfigurator.swift in Sources */,
+				9019428F799CC48E8FC428B2 /* TLSSocket.swift in Sources */,
+				05315905082CCB061512C346 /* TerminalInjector.swift in Sources */,
+				0D5640C2EFDE128B76B9CC81 /* TrustStoreInstaller.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B547F4DE12A89660A5EC67D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 07E5EB8CE175CEB79457620D /* PIIGuardHelper */;
+			targetProxy = AE2FC8F73EC089D3C9281117 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		28DA699604262E44DD53432A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PIIGUARD_APP_BUNDLE_ID = com.piiguard.app;
+				PIIGUARD_HELPER_BUNDLE_ID = com.piiguard.app.helper;
+				PIIGUARD_TEAM_ID = NBYH83Z3X8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2C70C03FBB930A88FE22A62E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/App/Resources/App.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Sources/App/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_APP_BUNDLE_ID)";
+				PRODUCT_NAME = "PIIGuard AI";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		59A0AAD57C2E3AC917B5EB77 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Sources/Helper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OTHER_LDFLAGS = "-sectcreate __TEXT __info_plist $(SRCROOT)/Sources/Helper/Info.plist -sectcreate __TEXT __launchd_plist $(SRCROOT)/Sources/Helper/Launchd.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_HELPER_BUNDLE_ID)";
+				PRODUCT_NAME = "$(PIIGUARD_HELPER_BUNDLE_ID)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6B9194A18B83BCCB956E1DEA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PIIGUARD_APP_BUNDLE_ID = com.piiguard.app;
+				PIIGUARD_HELPER_BUNDLE_ID = com.piiguard.app.helper;
+				PIIGUARD_TEAM_ID = NBYH83Z3X8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		893DE2BA98C10F1486FAAF36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/App/Resources/App.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Sources/App/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_APP_BUNDLE_ID)";
+				PRODUCT_NAME = "PIIGuard AI";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		FA10C503F753CF1982A9F1F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				ENABLE_HARDENED_RUNTIME = NO;
+				INFOPLIST_FILE = Sources/Helper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OTHER_LDFLAGS = "-sectcreate __TEXT __info_plist $(SRCROOT)/Sources/Helper/Info.plist -sectcreate __TEXT __launchd_plist $(SRCROOT)/Sources/Helper/Launchd.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_HELPER_BUNDLE_ID)";
+				PRODUCT_NAME = "$(PIIGUARD_HELPER_BUNDLE_ID)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0FB6C1B31AB4D25E96DF5BD6 /* Build configuration list for PBXNativeTarget "PIIGuardAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2C70C03FBB930A88FE22A62E /* Debug */,
+				893DE2BA98C10F1486FAAF36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		75DE10DCA67B73B840E6BE1A /* Build configuration list for PBXNativeTarget "PIIGuardHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59A0AAD57C2E3AC917B5EB77 /* Debug */,
+				FA10C503F753CF1982A9F1F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7774A7B34A298CA3CF6F84AE /* Build configuration list for PBXProject "PIIGuardAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28DA699604262E44DD53432A /* Debug */,
+				6B9194A18B83BCCB956E1DEA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D65B91503E158C7660022FBF /* XCRemoteSwiftPackageReference "swift-crypto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-crypto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.9.0;
+			};
+		};
+		F1D2500D5822F25317714638 /* XCRemoteSwiftPackageReference "swift-certificates" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-certificates.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		404173E704A843D13D84218D /* X509 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1D2500D5822F25317714638 /* XCRemoteSwiftPackageReference "swift-certificates" */;
+			productName = X509;
+		};
+		8C5B69007EA584317D861F01 /* Crypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D65B91503E158C7660022FBF /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = Crypto;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 285C337E6718B5A3308E63EB /* Project object */;
+}

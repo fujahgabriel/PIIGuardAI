@@ -1,0 +1,104 @@
+name: PIIGuardAI
+options:
+  bundleIdPrefix: com.piiguard
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+# Single source of truth for identifiers shared across targets/build phases
+# below (via $(...) build-setting references) -- change them here only.
+settings:
+  base:
+    PIIGUARD_APP_BUNDLE_ID: com.piiguard.app
+    PIIGUARD_HELPER_BUNDLE_ID: com.piiguard.app.helper
+    PIIGUARD_TEAM_ID: NBYH83Z3X8
+
+packages:
+  swift-certificates:
+    url: https://github.com/apple/swift-certificates.git
+    from: 1.5.0
+  swift-crypto:
+    url: https://github.com/apple/swift-crypto.git
+    from: 3.9.0
+
+targets:
+  PIIGuardAI:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/App
+        excludes:
+          - Resources/Info.plist
+          - Resources/App.entitlements
+      - path: Sources/HelperShared
+    info:
+      path: Sources/App/Resources/Info.plist
+      properties:
+        LSUIElement: true
+        NSHumanReadableCopyright: "Copyright Carbon"
+        LSApplicationCategoryType: public.app-category.utilities
+        CFBundleDisplayName: "PIIGuard AI"
+        CFBundleName: "PIIGuard AI"
+        # Info.plist dict KEYS don't get $(...) build-setting substitution (only
+        # string VALUES do -- verified by building and inspecting the compiled
+        # plist), so this key must be kept in sync with PIIGUARD_HELPER_BUNDLE_ID
+        # above by hand. The value itself is still substituted correctly.
+        SMPrivilegedExecutables:
+          com.piiguard.app.helper: 'anchor apple generic and certificate leaf[subject.OU] = "$(PIIGUARD_TEAM_ID)" and identifier "$(PIIGUARD_HELPER_BUNDLE_ID)"'
+    entitlements:
+      path: Sources/App/Resources/App.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+    settings:
+      base:
+        PRODUCT_NAME: "PIIGuard AI"
+        PRODUCT_BUNDLE_IDENTIFIER: $(PIIGUARD_APP_BUNDLE_ID)
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: $(PIIGUARD_TEAM_ID)
+        SWIFT_VERSION: "5.0"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        ENABLE_HARDENED_RUNTIME: false
+    dependencies:
+      - package: swift-certificates
+        product: X509
+      - package: swift-crypto
+        product: Crypto
+      - target: PIIGuardHelper
+    postbuildScripts:
+      - name: Embed privileged helper
+        script: |
+          set -e
+          HELPER_ID="${PIIGUARD_HELPER_BUNDLE_ID}"
+          SRC="${BUILT_PRODUCTS_DIR}/${HELPER_ID}"
+          DEST_DIR="${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Library/LaunchServices"
+          mkdir -p "${DEST_DIR}"
+          cp "${SRC}" "${DEST_DIR}/${HELPER_ID}"
+          codesign --force --sign "${EXPANDED_CODE_SIGN_IDENTITY:-$CODE_SIGN_IDENTITY}" --identifier "${HELPER_ID}" "${DEST_DIR}/${HELPER_ID}"
+        basedOnDependencyAnalysis: false
+
+  PIIGuardHelper:
+    type: tool
+    platform: macOS
+    sources:
+      - path: Sources/Helper
+        excludes:
+          - Info.plist
+          - Launchd.plist
+      - path: Sources/HelperShared
+    settings:
+      base:
+        PRODUCT_NAME: $(PIIGUARD_HELPER_BUNDLE_ID)
+        PRODUCT_BUNDLE_IDENTIFIER: $(PIIGUARD_HELPER_BUNDLE_ID)
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: $(PIIGUARD_TEAM_ID)
+        SWIFT_VERSION: "5.0"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        ENABLE_HARDENED_RUNTIME: false
+        SKIP_INSTALL: YES
+        # Info.plist/Launchd.plist are linker-embedded raw files (see Sources/Helper/),
+        # not processed through Xcode's Info.plist step, so $(...) substitution doesn't reach
+        # them -- their literal "com.piiguard.app.helper"/"NBYH83Z3X8" strings must be kept in
+        # sync with PIIGUARD_HELPER_BUNDLE_ID/PIIGUARD_TEAM_ID above by hand if those ever change.
+        OTHER_LDFLAGS: "-sectcreate __TEXT __info_plist $(SRCROOT)/Sources/Helper/Info.plist -sectcreate __TEXT __launchd_plist $(SRCROOT)/Sources/Helper/Launchd.plist"
