@@ -11,7 +11,7 @@ settings:
   base:
     PIIGUARD_APP_BUNDLE_ID: com.piiguard.app
     PIIGUARD_HELPER_BUNDLE_ID: com.piiguard.app.helper
-    PIIGUARD_TEAM_ID: NBYH83Z3X8
+    PIIGUARD_TEAM_ID: RQ6QC94PK8
 
 packages:
   swift-certificates:
@@ -30,6 +30,7 @@ targets:
         excludes:
           - Resources/Info.plist
           - Resources/App.entitlements
+      - path: Sources/SharedWidgetData
       - path: Sources/HelperShared
     info:
       path: Sources/App/Resources/Info.plist
@@ -48,6 +49,12 @@ targets:
     entitlements:
       path: Sources/App/Resources/App.entitlements
       properties:
+        com.apple.security.application-groups:
+          - group.com.piiguard.app
+        com.apple.developer.networking.networkextension:
+          - app-proxy-provider
+          - content-filter-provider
+          - url-filter-provider
         com.apple.security.app-sandbox: false
     settings:
       base:
@@ -61,6 +68,8 @@ targets:
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         ENABLE_HARDENED_RUNTIME: false
     dependencies:
+      - target: PIIGuardWidget
+        embed: true
       - package: swift-certificates
         product: X509
       - package: swift-crypto
@@ -77,6 +86,36 @@ targets:
           cp "${SRC}" "${DEST_DIR}/${HELPER_ID}"
           codesign --force --sign "${EXPANDED_CODE_SIGN_IDENTITY:-$CODE_SIGN_IDENTITY}" --identifier "${HELPER_ID}" "${DEST_DIR}/${HELPER_ID}"
         basedOnDependencyAnalysis: false
+
+  PIIGuardWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Sources/WidgetExtension
+      - path: Sources/SharedWidgetData
+    info:
+      path: Sources/WidgetExtension/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Sources/WidgetExtension/Widget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.piiguard.app
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.piiguard.app.widget
+        PRODUCT_NAME: PIIGuardWidget
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: $(PIIGUARD_TEAM_ID)
+        SWIFT_VERSION: "5.0"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
 
   PIIGuardHelper:
     type: tool

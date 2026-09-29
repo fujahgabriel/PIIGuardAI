@@ -4,10 +4,14 @@ import AppKit
 
 @MainActor
 final class AppState: ObservableObject {
-    @Published private(set) var isProtecting = false
+    @Published private(set) var isProtecting = false {
+        didSet { publishWidgetSnapshot() }
+    }
     @Published private(set) var isBusy = false
     @Published var lastError: String?
-    @Published private(set) var events: [TrafficEvent] = []
+    @Published private(set) var events: [TrafficEvent] = [] {
+        didSet { publishWidgetSnapshot() }
+    }
     @Published var providers: [ProviderDomain]
     @Published var customRules: [CustomRule] {
         didSet { persistCustomRules(); pushDetectorUpdate() }
@@ -119,6 +123,7 @@ final class AppState: ObservableObject {
         proxy.setAutoRedactEnabled(autoRedactEnabled)
 
         events = Array(activityStore.loadAll().prefix(1000))
+        publishWidgetSnapshot()
     }
 
     // MARK: - Protection lifecycle
@@ -407,6 +412,30 @@ final class AppState: ObservableObject {
         case .allowed, .allowedUnscanned:
             break
         }
+    }
+
+    private func publishWidgetSnapshot() {
+        let snapshot = WidgetDataSnapshot(
+            protectionEnabled: isProtecting,
+            updatedAt: Date(),
+            requestCount: events.count,
+            blockedCount: blockedCount,
+            recentActivity: events.prefix(4).map { event in
+                WidgetActivity(
+                    id: event.id,
+                    date: event.date,
+                    providerName: event.providerName,
+                    outcome: event.outcome.rawValue
+                )
+            },
+            dailyActivity: dailyCounts(days: 7).map { day in
+                WidgetDailyActivity(
+                    day: day.day,
+                    requestCount: day.blocked + day.allowed + day.unscanned + day.redacted
+                )
+            }
+        )
+        WidgetSnapshotStore.publish(snapshot)
     }
 
     func clearActivityLog() {

@@ -16,6 +16,7 @@
 		12CE6CD0ADB8667D782993F1 /* PACFileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9756272C651A6EBBB93714 /* PACFileServer.swift */; };
 		1406F7C91D2B1B1DBF380978 /* ActivityTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFBDAFBEA9EF87525F5E357 /* ActivityTabView.swift */; };
 		1A04828004D34CEF7F22BA88 /* DebugBodyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8FD97D551417CEE1AA21EC /* DebugBodyStore.swift */; };
+		1ED1F37EDD19E0D0AEA65C09 /* PIIGuardWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA201AE41C19E3B1C0234F3 /* PIIGuardWidget.swift */; };
 		2004A7751B58576E71ECFE5D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E6718AC8F2F611FF9A675C /* SettingsView.swift */; };
 		21D3F73C4D4119E831DCDCB0 /* PIIGuardHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3DF6EC04D689BF704CC5DE /* PIIGuardHelperProtocol.swift */; };
 		22CE443E98E2AA853BECB574 /* BlockEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F382B18B4F5D8039FCD19996 /* BlockEvent.swift */; };
@@ -28,14 +29,17 @@
 		3945E5C28C937C0DD4A3A473 /* PIIGuardHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3DF6EC04D689BF704CC5DE /* PIIGuardHelperProtocol.swift */; };
 		4774C11B2A3AF4A9CA7EC742 /* PIIGuardAIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEB839D087F97B649ABC1A6 /* PIIGuardAIApp.swift */; };
 		4AD3F62907865F8092A37D43 /* HTTPMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5732444352130F99F0F2C4 /* HTTPMessage.swift */; };
+		538E654CB3BD5EC34939B38D /* WidgetDataSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3BC03D4AEEB9EAFEA6AEA79 /* WidgetDataSnapshot.swift */; };
 		6710FF79FD645C61D8B67B19 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A8385A05E3D652EA936D44 /* MenuBarView.swift */; };
 		6799F5FEA2A9FE277D9A12F0 /* CertificateAuthority.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C32ED4F90B35E76E6BAC81F /* CertificateAuthority.swift */; };
 		7D0D35DF8561E83929ED4E00 /* PIIGuardHelper in Resources */ = {isa = PBXBuildFile; fileRef = 9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7D3F2D568F18436EC0DA6894 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDAF7373B47CAD6882CC39 /* LoginItemManager.swift */; };
 		7FFCE832FBC72211824DBDD7 /* CLIProxyEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37456D67F741DFA2FBA11B9 /* CLIProxyEnv.swift */; };
+		8B41993F1BFB1C890D74CAD8 /* PIIGuardWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8F238C5DC1AE3F40817B72E6 /* PIIGuardWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9019428F799CC48E8FC428B2 /* TLSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C02A52F5C4886E951A3F0F /* TLSSocket.swift */; };
 		912042B5B06440040B8AB77C /* PIIRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AC2066FABC648C14DD9E8F /* PIIRule.swift */; };
 		9DDDDCF4A9D095886D52FBFF /* ProviderDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD82D8E2CFC4EBD60C1C9188 /* ProviderDomain.swift */; };
+		A2C5E76256917ECB59AD075E /* WidgetDataSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3BC03D4AEEB9EAFEA6AEA79 /* WidgetDataSnapshot.swift */; };
 		B2344473BE434F8BB4AA7FC8 /* BlockNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D4316FD7CF76113E74F374 /* BlockNotifier.swift */; };
 		C725FDF1249731E8DB408A93 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E29CF855D2F891E2629DBE /* AppDelegate.swift */; };
 		CF05DBABE6B370F0DD6F3DFD /* POSIXSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594293F52D884CB6CA2A0316 /* POSIXSocket.swift */; };
@@ -45,6 +49,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9693E04DF59FC9E176213B48 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 285C337E6718B5A3308E63EB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3CB62682CF9A86D366CF7F3;
+			remoteInfo = PIIGuardWidget;
+		};
 		AE2FC8F73EC089D3C9281117 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 285C337E6718B5A3308E63EB /* Project object */;
@@ -53,6 +64,20 @@
 			remoteInfo = PIIGuardHelper;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		004F9E0015E988FD33F27645 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8B41993F1BFB1C890D74CAD8 /* PIIGuardWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		02AC2066FABC648C14DD9E8F /* PIIRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIRule.swift; sourceTree = "<group>"; };
@@ -63,9 +88,11 @@
 		1A0D65D81C6196D1877CCCB3 /* PrivilegedRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivilegedRunner.swift; sourceTree = "<group>"; };
 		2B9756272C651A6EBBB93714 /* PACFileServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PACFileServer.swift; sourceTree = "<group>"; };
 		2C35E8AAC0C7A2ADA68D30F9 /* AppIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIdentity.swift; sourceTree = "<group>"; };
+		2CA201AE41C19E3B1C0234F3 /* PIIGuardWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIGuardWidget.swift; sourceTree = "<group>"; };
 		352863EA005D1820D0316595 /* TrustStoreInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustStoreInstaller.swift; sourceTree = "<group>"; };
 		36C02A52F5C4886E951A3F0F /* TLSSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSSocket.swift; sourceTree = "<group>"; };
 		3E3DF6EC04D689BF704CC5DE /* PIIGuardHelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIGuardHelperProtocol.swift; sourceTree = "<group>"; };
+		49A2581CE9DB25B792D06A4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		594293F52D884CB6CA2A0316 /* POSIXSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = POSIXSocket.swift; sourceTree = "<group>"; };
 		5AFBDAFBEA9EF87525F5E357 /* ActivityTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTabView.swift; sourceTree = "<group>"; };
 		5CAAF1D578E619AA3C5964FD /* CustomRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRule.swift; sourceTree = "<group>"; };
@@ -73,6 +100,7 @@
 		73D4316FD7CF76113E74F374 /* BlockNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockNotifier.swift; sourceTree = "<group>"; };
 		7BB3AF099314974E4EA4D361 /* ActivityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityStore.swift; sourceTree = "<group>"; };
 		7EEB839D087F97B649ABC1A6 /* PIIGuardAIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIGuardAIApp.swift; sourceTree = "<group>"; };
+		8F238C5DC1AE3F40817B72E6 /* PIIGuardWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PIIGuardWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		97277F7BDDF1F651D1E7B53A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */ = {isa = PBXFileReference; includeInIndex = 0; path = PIIGuardHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EBDAF7373B47CAD6882CC39 /* LoginItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemManager.swift; sourceTree = "<group>"; };
@@ -81,6 +109,8 @@
 		A8F99DAF3A30B83602418268 /* PIIGuardAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PIIGuardAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B315EEE2161F3EB36AE1D493 /* MITMProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITMProxyServer.swift; sourceTree = "<group>"; };
 		BDC88FBD1E953BD3D698DB75 /* SystemProxyConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemProxyConfigurator.swift; sourceTree = "<group>"; };
+		C3BC03D4AEEB9EAFEA6AEA79 /* WidgetDataSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataSnapshot.swift; sourceTree = "<group>"; };
+		CABA0B4B2DEB7B5E6ECF98CC /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
 		D058BFBCC94465FD58154C12 /* TerminalInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalInjector.swift; sourceTree = "<group>"; };
 		DD8FD97D551417CEE1AA21EC /* DebugBodyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugBodyStore.swift; sourceTree = "<group>"; };
 		E3A8385A05E3D652EA936D44 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
@@ -135,8 +165,20 @@
 				B04AFEC421012716ED43BA5F /* App */,
 				CADBA41EDB99DE88506997E6 /* Helper */,
 				3F7CC3CB36A702BCF395DCE4 /* HelperShared */,
+				DB9F65DD2B83F508067F64E4 /* SharedWidgetData */,
+				26DEE677BE584A51041E8B0D /* WidgetExtension */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		26DEE677BE584A51041E8B0D /* WidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				49A2581CE9DB25B792D06A4A /* Info.plist */,
+				2CA201AE41C19E3B1C0234F3 /* PIIGuardWidget.swift */,
+				CABA0B4B2DEB7B5E6ECF98CC /* Widget.entitlements */,
+			);
+			path = WidgetExtension;
 			sourceTree = "<group>";
 		};
 		2EAE4E513F9E3636552AA8ED /* Certificates */ = {
@@ -169,6 +211,7 @@
 			children = (
 				A8F99DAF3A30B83602418268 /* PIIGuardAI.app */,
 				9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */,
+				8F238C5DC1AE3F40817B72E6 /* PIIGuardWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -219,6 +262,14 @@
 			);
 			sourceTree = "<group>";
 		};
+		DB9F65DD2B83F508067F64E4 /* SharedWidgetData */ = {
+			isa = PBXGroup;
+			children = (
+				C3BC03D4AEEB9EAFEA6AEA79 /* WidgetDataSnapshot.swift */,
+			);
+			path = SharedWidgetData;
+			sourceTree = "<group>";
+		};
 		F436B03ED02274ECA9A83AFE /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -265,11 +316,13 @@
 				ACC62DE05ADE47E1E687CC2B /* Sources */,
 				0B4B1B664F6FB44D0393300C /* Resources */,
 				09CD756F18901ACC5A21380D /* Frameworks */,
+				004F9E0015E988FD33F27645 /* Embed Foundation Extensions */,
 				DD1003D50CC5F82E463B0276 /* Embed privileged helper */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BFC0BD929217A315A876BD09 /* PBXTargetDependency */,
 				B547F4DE12A89660A5EC67D3 /* PBXTargetDependency */,
 			);
 			name = PIIGuardAI;
@@ -280,6 +333,23 @@
 			productName = PIIGuardAI;
 			productReference = A8F99DAF3A30B83602418268 /* PIIGuardAI.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F3CB62682CF9A86D366CF7F3 /* PIIGuardWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0E822873A35B4558492B158A /* Build configuration list for PBXNativeTarget "PIIGuardWidget" */;
+			buildPhases = (
+				E07DC35F1262EE5E144CC47C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PIIGuardWidget;
+			packageProductDependencies = (
+			);
+			productName = PIIGuardWidget;
+			productReference = 8F238C5DC1AE3F40817B72E6 /* PIIGuardWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -295,6 +365,10 @@
 						ProvisioningStyle = Automatic;
 					};
 					2C0D3D7AA40A8C5B8D67FB90 = {
+						DevelopmentTeam = "$(PIIGUARD_TEAM_ID)";
+						ProvisioningStyle = Automatic;
+					};
+					F3CB62682CF9A86D366CF7F3 = {
 						DevelopmentTeam = "$(PIIGUARD_TEAM_ID)";
 						ProvisioningStyle = Automatic;
 					};
@@ -319,6 +393,7 @@
 			projectRoot = "";
 			targets = (
 				2C0D3D7AA40A8C5B8D67FB90 /* PIIGuardAI */,
+				F3CB62682CF9A86D366CF7F3 /* PIIGuardWidget */,
 				07E5EB8CE175CEB79457620D /* PIIGuardHelper */,
 			);
 		};
@@ -401,6 +476,16 @@
 				9019428F799CC48E8FC428B2 /* TLSSocket.swift in Sources */,
 				05315905082CCB061512C346 /* TerminalInjector.swift in Sources */,
 				0D5640C2EFDE128B76B9CC81 /* TrustStoreInstaller.swift in Sources */,
+				538E654CB3BD5EC34939B38D /* WidgetDataSnapshot.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E07DC35F1262EE5E144CC47C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ED1F37EDD19E0D0AEA65C09 /* PIIGuardWidget.swift in Sources */,
+				A2C5E76256917ECB59AD075E /* WidgetDataSnapshot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,9 +497,39 @@
 			target = 07E5EB8CE175CEB79457620D /* PIIGuardHelper */;
 			targetProxy = AE2FC8F73EC089D3C9281117 /* PBXContainerItemProxy */;
 		};
+		BFC0BD929217A315A876BD09 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3CB62682CF9A86D366CF7F3 /* PIIGuardWidget */;
+			targetProxy = 9693E04DF59FC9E176213B48 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		1D7371E500FBCA94D9A725A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Sources/WidgetExtension/Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				INFOPLIST_FILE = Sources/WidgetExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.piiguard.app.widget;
+				PRODUCT_NAME = PIIGuardWidget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
 		28DA699604262E44DD53432A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -472,7 +587,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PIIGUARD_APP_BUNDLE_ID = com.piiguard.app;
 				PIIGUARD_HELPER_BUNDLE_ID = com.piiguard.app.helper;
-				PIIGUARD_TEAM_ID = NBYH83Z3X8;
+				PIIGUARD_TEAM_ID = RQ6QC94PK8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -577,7 +692,7 @@
 				MTL_FAST_MATH = YES;
 				PIIGUARD_APP_BUNDLE_ID = com.piiguard.app;
 				PIIGUARD_HELPER_BUNDLE_ID = com.piiguard.app.helper;
-				PIIGUARD_TEAM_ID = NBYH83Z3X8;
+				PIIGUARD_TEAM_ID = RQ6QC94PK8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -610,6 +725,31 @@
 			};
 			name = Release;
 		};
+		C473710B83864C284E62AD7C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Sources/WidgetExtension/Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				INFOPLIST_FILE = Sources/WidgetExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.piiguard.app.widget;
+				PRODUCT_NAME = PIIGuardWidget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		FA10C503F753CF1982A9F1F3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -635,6 +775,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0E822873A35B4558492B158A /* Build configuration list for PBXNativeTarget "PIIGuardWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D7371E500FBCA94D9A725A5 /* Debug */,
+				C473710B83864C284E62AD7C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		0FB6C1B31AB4D25E96DF5BD6 /* Build configuration list for PBXNativeTarget "PIIGuardAI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
