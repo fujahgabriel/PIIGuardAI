@@ -453,7 +453,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nHELPER_ID=\"${PIIGUARD_HELPER_BUNDLE_ID}\"\nSRC=\"${BUILT_PRODUCTS_DIR}/${HELPER_ID}\"\nDEST_DIR=\"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Library/LaunchServices\"\nmkdir -p \"${DEST_DIR}\"\ncp \"${SRC}\" \"${DEST_DIR}/${HELPER_ID}\"\ncodesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY:-$CODE_SIGN_IDENTITY}\" --identifier \"${HELPER_ID}\" \"${DEST_DIR}/${HELPER_ID}\"\n";
+			shellScript = "set -e\nHELPER_ID=\"${PIIGUARD_HELPER_BUNDLE_ID}\"\nSRC=\"${BUILT_PRODUCTS_DIR}/${HELPER_ID}\"\nDEST_DIR=\"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Library/LaunchServices\"\nmkdir -p \"${DEST_DIR}\"\ncp \"${SRC}\" \"${DEST_DIR}/${HELPER_ID}\"\ncodesign --force --options runtime --sign \"${EXPANDED_CODE_SIGN_IDENTITY:-$CODE_SIGN_IDENTITY}\" --identifier \"${HELPER_ID}\" \"${DEST_DIR}/${HELPER_ID}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -541,6 +541,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/WidgetExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -549,6 +550,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
+				OTHER_CODE_SIGN_FLAGS = "--options runtime";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piiguard.app.widget;
 				PRODUCT_NAME = PIIGuardWidget;
 				SDKROOT = macosx;
@@ -632,7 +634,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/App/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -640,6 +642,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
+				OTHER_CODE_SIGN_FLAGS = "--options runtime";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_APP_BUNDLE_ID)";
 				PRODUCT_NAME = "PIIGuard AI";
 				SDKROOT = macosx;
@@ -653,13 +656,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Helper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OTHER_CODE_SIGN_FLAGS = "--options runtime";
 				OTHER_LDFLAGS = "-sectcreate __TEXT __info_plist $(SRCROOT)/Sources/Helper/Info.plist -sectcreate __TEXT __launchd_plist $(SRCROOT)/Sources/Helper/Launchd.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_HELPER_BUNDLE_ID)";
 				PRODUCT_NAME = "$(PIIGUARD_HELPER_BUNDLE_ID)";
@@ -737,7 +741,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/App/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -745,6 +749,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
+				OTHER_CODE_SIGN_FLAGS = "--options runtime";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_APP_BUNDLE_ID)";
 				PRODUCT_NAME = "PIIGuard AI";
 				SDKROOT = macosx;
@@ -762,6 +767,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/WidgetExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -770,6 +776,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
+				OTHER_CODE_SIGN_FLAGS = "--options runtime";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piiguard.app.widget;
 				PRODUCT_NAME = PIIGuardWidget;
 				SDKROOT = macosx;
@@ -784,13 +791,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "$(PIIGUARD_TEAM_ID)";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/Helper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OTHER_CODE_SIGN_FLAGS = "--options runtime";
 				OTHER_LDFLAGS = "-sectcreate __TEXT __info_plist $(SRCROOT)/Sources/Helper/Info.plist -sectcreate __TEXT __launchd_plist $(SRCROOT)/Sources/Helper/Launchd.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PIIGUARD_HELPER_BUNDLE_ID)";
 				PRODUCT_NAME = "$(PIIGUARD_HELPER_BUNDLE_ID)";

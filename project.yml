@@ -5,6 +5,12 @@ options:
     macOS: "14.0"
   createIntermediateGroups: true
 
+schemes:
+  PIIGuardAI:
+    build:
+      targets:
+        PIIGuardAI: all
+
 # Single source of truth for identifiers shared across targets/build phases
 # below (via $(...) build-setting references) -- change them here only.
 settings:
@@ -67,7 +73,8 @@ targets:
         DEVELOPMENT_TEAM: $(PIIGUARD_TEAM_ID)
         SWIFT_VERSION: "5.0"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
-        ENABLE_HARDENED_RUNTIME: false
+        ENABLE_HARDENED_RUNTIME: YES
+        OTHER_CODE_SIGN_FLAGS: "--options runtime"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     dependencies:
       - target: PIIGuardWidget
@@ -86,7 +93,7 @@ targets:
           DEST_DIR="${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Library/LaunchServices"
           mkdir -p "${DEST_DIR}"
           cp "${SRC}" "${DEST_DIR}/${HELPER_ID}"
-          codesign --force --sign "${EXPANDED_CODE_SIGN_IDENTITY:-$CODE_SIGN_IDENTITY}" --identifier "${HELPER_ID}" "${DEST_DIR}/${HELPER_ID}"
+          codesign --force --options runtime --sign "${EXPANDED_CODE_SIGN_IDENTITY:-$CODE_SIGN_IDENTITY}" --identifier "${HELPER_ID}" "${DEST_DIR}/${HELPER_ID}"
         basedOnDependencyAnalysis: false
 
   PIIGuardWidget:
@@ -118,6 +125,8 @@ targets:
         DEVELOPMENT_TEAM: $(PIIGUARD_TEAM_ID)
         SWIFT_VERSION: "5.0"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
+        ENABLE_HARDENED_RUNTIME: YES
+        OTHER_CODE_SIGN_FLAGS: "--options runtime"
         APPLICATION_EXTENSION_API_ONLY: YES
         SKIP_INSTALL: YES
 
@@ -138,7 +147,8 @@ targets:
         DEVELOPMENT_TEAM: $(PIIGUARD_TEAM_ID)
         SWIFT_VERSION: "5.0"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
-        ENABLE_HARDENED_RUNTIME: false
+        ENABLE_HARDENED_RUNTIME: YES
+        OTHER_CODE_SIGN_FLAGS: "--options runtime"
         SKIP_INSTALL: YES
         # Info.plist/Launchd.plist are linker-embedded raw files (see Sources/Helper/),
         # not processed through Xcode's Info.plist step, so $(...) substitution doesn't reach
