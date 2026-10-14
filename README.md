@@ -90,7 +90,7 @@ PIIGuard AI protects sensitive data across three primary workflows via a dual-ch
 * **Covered API Endpoints**:
   * Anthropic API (`api.anthropic.com`)
   * OpenAI API (`api.openai.com`)
-  * Google AI (`generativelanguage.googleapis.com`)
+  * Google AI / Antigravity (`generativelanguage.googleapis.com`, `aiplatform.googleapis.com`, `antigravity.google`)
   * OpenRouter (`openrouter.ai`)
   * Mistral (`api.mistral.ai`), Cohere (`api.cohere.ai`), xAI (`api.x.ai`)
 * **Extensions & Coding Agents**: AI coding assistants (e.g., Cline, Continue, Claude Code extensions) executing through Node or Python runtimes route their requests through the proxy.
