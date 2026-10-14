@@ -38,6 +38,7 @@
 		8B41993F1BFB1C890D74CAD8 /* PIIGuardWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8F238C5DC1AE3F40817B72E6 /* PIIGuardWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9019428F799CC48E8FC428B2 /* TLSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C02A52F5C4886E951A3F0F /* TLSSocket.swift */; };
 		912042B5B06440040B8AB77C /* PIIRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AC2066FABC648C14DD9E8F /* PIIRule.swift */; };
+		991432B1BE12363B415341CB /* GzipHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1826D6C37E8EE1E86FE839 /* GzipHelper.swift */; };
 		9DDDDCF4A9D095886D52FBFF /* ProviderDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD82D8E2CFC4EBD60C1C9188 /* ProviderDomain.swift */; };
 		A2C5E76256917ECB59AD075E /* WidgetDataSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3BC03D4AEEB9EAFEA6AEA79 /* WidgetDataSnapshot.swift */; };
 		B2344473BE434F8BB4AA7FC8 /* BlockNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D4316FD7CF76113E74F374 /* BlockNotifier.swift */; };
@@ -101,6 +102,7 @@
 		73D4316FD7CF76113E74F374 /* BlockNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockNotifier.swift; sourceTree = "<group>"; };
 		7BB3AF099314974E4EA4D361 /* ActivityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityStore.swift; sourceTree = "<group>"; };
 		7EEB839D087F97B649ABC1A6 /* PIIGuardAIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PIIGuardAIApp.swift; sourceTree = "<group>"; };
+		8B1826D6C37E8EE1E86FE839 /* GzipHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GzipHelper.swift; sourceTree = "<group>"; };
 		8F238C5DC1AE3F40817B72E6 /* PIIGuardWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PIIGuardWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		97277F7BDDF1F651D1E7B53A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */ = {isa = PBXFileReference; includeInIndex = 0; path = PIIGuardHelper; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,6 +140,7 @@
 		0568810E1F4EB27C83F71335 /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
+				8B1826D6C37E8EE1E86FE839 /* GzipHelper.swift */,
 				5D5732444352130F99F0F2C4 /* HTTPMessage.swift */,
 				B315EEE2161F3EB36AE1D493 /* MITMProxyServer.swift */,
 				594293F52D884CB6CA2A0316 /* POSIXSocket.swift */,
@@ -469,6 +472,7 @@
 				6799F5FEA2A9FE277D9A12F0 /* CertificateAuthority.swift in Sources */,
 				2CFAC481A2BE9384913B158B /* CustomRule.swift in Sources */,
 				1A04828004D34CEF7F22BA88 /* DebugBodyStore.swift in Sources */,
+				991432B1BE12363B415341CB /* GzipHelper.swift in Sources */,
 				4AD3F62907865F8092A37D43 /* HTTPMessage.swift in Sources */,
 				25CEA4BC1E83B494FB7393C3 /* HelperClient.swift in Sources */,
 				032EEA637B5AAA40A4B7F508 /* IdentityStore.swift in Sources */,

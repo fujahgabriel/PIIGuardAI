@@ -216,14 +216,24 @@ final class MITMProxyServer {
         var matches: [PIIMatch] = []
         var scanned = true
         var bodyText: String?
-        if let body, let text = String(data: body, encoding: .utf8) {
-            bodyText = text
-            matches = currentDetector.scan(text)
-        } else if head.contentLength.map({ $0 > 0 }) == true || head.isChunked {
-            scanned = false
+        var wasCompressed = false
+
+        if let body {
+            if let text = String(data: body, encoding: .utf8) {
+                bodyText = text
+                matches = currentDetector.scan(text)
+            } else if let decompressed = GzipHelper.decompress(body),
+                      let text = String(data: decompressed, encoding: .utf8) {
+                bodyText = text
+                wasCompressed = true
+                matches = currentDetector.scan(text)
+            } else if head.contentLength.map({ $0 > 0 }) == true || head.isChunked {
+                scanned = false
+            }
         }
 
         var effectiveBody = body
+        var effectiveHead = head
 
         if !matches.isEmpty {
             let categories = Array(Set(matches.map(\.categoryName))).sorted()
@@ -234,9 +244,21 @@ final class MITMProxyServer {
 
             let allRedactable = matches.allSatisfy { $0.range.location != NSNotFound && $0.range.length > 0 }
             if currentlyAutoRedacting, allRedactable, let bodyText {
-                effectiveBody = Data(currentDetector.redactedText(in: bodyText, matches: matches).utf8)
+                let redactedText = currentDetector.redactedText(in: bodyText, matches: matches)
+                if wasCompressed {
+                    if let recompressed = GzipHelper.compress(Data(redactedText.utf8)) {
+                        effectiveBody = recompressed
+                    } else {
+                        effectiveBody = Data(redactedText.utf8)
+                        var headers = effectiveHead.headers
+                        headers.removeValue(forKey: "content-encoding")
+                        effectiveHead = HTTPRequestHead(method: effectiveHead.method, target: effectiveHead.target, httpVersion: effectiveHead.httpVersion, headers: headers)
+                    }
+                } else {
+                    effectiveBody = Data(redactedText.utf8)
+                }
                 notify(host: host, providerName: providerName, outcome: .redacted, categories: categories, detectionPreviews: detectionPreviews)
-                return forward(head: head, body: effectiveBody, host: host, providerName: providerName, port: port, clientTLS: clientTLS)
+                return forward(head: effectiveHead, body: effectiveBody, host: host, providerName: providerName, port: port, clientTLS: clientTLS)
             } else if currentlyBlocking {
                 try? clientTLS.write(Self.blockedResponse(categories: categories))
                 notify(host: host, providerName: providerName, outcome: .blocked, categories: categories, detectionPreviews: detectionPreviews)
@@ -244,7 +266,7 @@ final class MITMProxyServer {
             }
         }
 
-        return forward(head: head, body: effectiveBody, host: host, providerName: providerName, port: port, clientTLS: clientTLS, notifyOutcome: scanned ? .allowed : .allowedUnscanned)
+        return forward(head: effectiveHead, body: effectiveBody, host: host, providerName: providerName, port: port, clientTLS: clientTLS, notifyOutcome: scanned ? .allowed : .allowedUnscanned)
     }
 
     private func forward(head: HTTPRequestHead, body: Data?, host: String, providerName: String, port: UInt16, clientTLS: TLSSocket, notifyOutcome: TrafficEvent.Outcome? = nil) -> Bool {
