@@ -15,65 +15,95 @@ struct SettingsView: View {
             ActivityTabView()
                 .tabItem { Label("Activity", systemImage: "chart.bar.doc.horizontal") }
         }
-        .frame(width: 620, height: 620)
-        .padding()
+        .frame(width: 700, height: 670)
     }
+
+    // MARK: - General Tab
 
     private var generalTab: some View {
         Form {
-            Toggle("Launch at login", isOn: $appState.launchAtLogin)
-
-            Section("Root certificate") {
-                Text("\(AppIdentity.displayName) inspects traffic to AI providers by installing a local certificate authority and routing only those providers' domains through a local proxy on this Mac. Nothing else is intercepted, and no data leaves this device.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            Section {
+                Toggle("Launch at Login", isOn: $appState.launchAtLogin)
+            } footer: {
+                Text("Start \(AppIdentity.displayName) automatically when you log in to your Mac.")
             }
 
-            Section("CLI protection (Terminal)") {
-                Text("Auto-deployed when you toggle protection ON — new Terminal windows and VS Code/Cursor pick up the proxy without manual steps. Covers claude code, codex, opencode, curl, python. No data leaves the device.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            Section {
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundStyle(.green)
+                        .font(.title2)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Root CA Installed & Trusted")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        Text("Mints ephemeral certificates locally on this Mac to inspect AI provider traffic. Nothing else is intercepted, and no data leaves your device.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 3)
+            } header: {
+                Text("Local Certificate Authority")
+            }
+
+            Section {
+                Toggle("Auto-inject into open Terminal.app tabs on toggle", isOn: $appState.autoInjectIntoTerminal)
+
                 CLIEnvSection()
+            } header: {
+                Text("Command-Line & IDE Integration")
+            } footer: {
+                Text("Routes terminal tools (claude code, codex, opencode, curl, python) and IDEs (VS Code, Cursor) through the proxy when protection is active.")
             }
 
             Section {
                 Button(role: .destructive) {
                     showingUninstallConfirmation = true
                 } label: {
-                    Text("Remove certificate & reset")
+                    Text("Remove Certificate & Reset Everything…")
                 }
                 .confirmationDialog(
-                    "This removes \(AppIdentity.displayName)'s trusted certificate and turns off the proxy. Your Mac's network settings will be restored.",
+                    "This removes \(AppIdentity.displayName)'s trusted certificate from your Keychain and resets all system proxy settings.",
                     isPresented: $showingUninstallConfirmation,
                     titleVisibility: .visible
                 ) {
-                    Button("Remove", role: .destructive) { appState.uninstallEverything() }
+                    Button("Remove & Reset", role: .destructive) { appState.uninstallEverything() }
                     Button("Cancel", role: .cancel) {}
                 }
+            } header: {
+                Text("Danger Zone")
+            } footer: {
+                Text("Removes the local root CA from your macOS Keychain and restores your network configuration.")
             }
         }
-        .padding()
+        .formStyle(.grouped)
     }
 
+    // MARK: - Providers Tab
+
     private var providersTab: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(spacing: 0) {
             List {
-                Section("Intercepted domains") {
+                Section {
                     ForEach(appState.providers) { provider in
-                        HStack {
+                        HStack(spacing: 10) {
                             Toggle(isOn: Binding(
                                 get: { provider.isEnabled },
                                 set: { appState.setProvider(provider, enabled: $0) }
                             )) {
-                                VStack(alignment: .leading) {
-                                    HStack(spacing: 4) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack(spacing: 6) {
                                         Text(provider.providerName)
+                                            .fontWeight(.medium)
+
                                         if provider.isCustom {
                                             Text("custom")
-                                                .font(.caption2)
+                                                .font(.system(size: 9.5, weight: .medium))
                                                 .padding(.horizontal, 5)
                                                 .padding(.vertical, 1)
-                                                .background(Color.secondary.opacity(0.2))
+                                                .background(Color.secondary.opacity(0.15))
                                                 .clipShape(Capsule())
                                         }
                                     }
@@ -82,41 +112,60 @@ struct SettingsView: View {
                                         .foregroundStyle(.secondary)
                                 }
                             }
+
                             if provider.isCustom {
                                 Button {
                                     appState.removeProvider(provider)
                                 } label: {
                                     Image(systemName: "trash")
+                                        .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
                                 .buttonStyle(.plain)
                             }
                         }
+                        .padding(.vertical, 1)
                     }
+                } header: {
+                    Text("Intercepted AI Domains")
+                } footer: {
+                    Text("Traffic to these domains is routed through the local proxy. All other network traffic resolves DIRECT with zero latency.")
                 }
             }
+            .listStyle(.inset(alternatesRowBackgrounds: true))
+
             Divider()
+
             AddProviderRow()
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color(nsColor: .controlBackgroundColor).opacity(0.3))
         }
     }
 
+    // MARK: - Detection Tab
+
     private var detectionTab: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(spacing: 0) {
             List {
-                Section("When PII is detected") {
-                    Toggle("Auto-redact and send instead of blocking", isOn: $appState.autoRedactEnabled)
+                Section("Protection Mode") {
+                    Picker("When PII is detected", selection: $appState.autoRedactEnabled) {
+                        Text("Auto-Redact").tag(true)
+                        Text("Block Request").tag(false)
+                    }
+                    .pickerStyle(.segmented)
+
                     Text(appState.autoRedactEnabled
-                        ? "Detected text is replaced with [REDACTED:category] and the rest of the message still goes through. Falls back to a full block for detections that can't be cleanly redacted (e.g. a bulk .env file paste)."
-                        : "The whole message is blocked when it contains PII."
+                        ? "Detected values are masked with [REDACTED:<category>] so prompts still complete without leaking sensitive data."
+                        : "Outbound messages containing PII are rejected with an immediate HTTP 403 Forbidden response."
                     )
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 }
 
-                Section("Built-in PII categories") {
+                Section("Built-in PII Categories") {
                     ForEach(PIICategory.allCases, id: \.self) { category in
-                        Toggle(category.displayName.capitalized, isOn: Binding(
+                        Toggle(isOn: Binding(
                             get: { appState.enabledCategories.contains(category) },
                             set: { isOn in
                                 if isOn {
@@ -125,13 +174,26 @@ struct SettingsView: View {
                                     appState.enabledCategories.remove(category)
                                 }
                             }
-                        ))
+                        )) {
+                            HStack(spacing: 8) {
+                                Image(systemName: categoryIcon(category))
+                                    .foregroundStyle(.tint)
+                                    .frame(width: 18)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(category.displayName.capitalized)
+                                        .fontWeight(.medium)
+                                    Text(categoryDescription(category))
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
                     }
                 }
 
-                Section("Custom rules") {
+                Section("Custom Rules") {
                     if appState.customRules.isEmpty {
-                        Text("No custom rules yet. Add a keyword, phrase, or regex below to block it too.")
+                        Text("No custom rules yet. Add keyword or regex filters below.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -141,10 +203,11 @@ struct SettingsView: View {
                                 get: { rule.isEnabled },
                                 set: { appState.setCustomRule(rule, enabled: $0) }
                             )) {
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading, spacing: 1) {
                                     Text(rule.label)
+                                        .fontWeight(.medium)
                                     Text(rule.isRegex ? "regex: \(rule.pattern)" : "contains: \"\(rule.pattern)\"")
-                                        .font(.caption)
+                                        .font(.caption2)
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -152,6 +215,7 @@ struct SettingsView: View {
                                 appState.removeCustomRule(rule)
                             } label: {
                                 Image(systemName: "trash")
+                                    .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             .buttonStyle(.plain)
@@ -159,38 +223,60 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("Debug — log actual bodies (false positives)") {
-                    Text("OFF by default. When ON, every blocked request's full body (truncated 8k) is appended to a 0600 file. Use to diagnose why a benign message was blocked, then turn OFF and clear. File → Finder.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Log raw bodies that triggered a block", isOn: Binding(
+                Section("Diagnostics") {
+                    Toggle("Log raw request bodies that trigger a block", isOn: Binding(
                         get: { appState.debugLogEnabled },
                         set: { appState.debugLogEnabled = $0 }
                     ))
-                    .toggleStyle(.switch)
-                    HStack(spacing: 8) {
-                        Button("Reveal debug log in Finder") { appState.revealDebugLogInFinder() }
-                        Button("Copy debug log") {
-                            _ = appState.copyDebugLogToPasteboard()
-                        }
-                        .help("Copy raw bodies (may contain PII) to clipboard")
-                        Button("Clear debug log") { appState.clearDebugLog() }
-                        Button("Copy path") {
-                            let pb = NSPasteboard.general
-                            pb.clearContents()
-                            pb.setString(appState.debugLogURL.path, forType: .string)
-                        }
-                    }
-                    .font(.caption)
-                    Text(appState.debugLogURL.path)
-                        .font(.system(.caption2, design: .monospaced))
+
+                    Text("Appends blocked payloads to a secure local file (0600 permissions). Use only to diagnose false positives.")
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
-                        .textSelection(.enabled)
+
+                    HStack(spacing: 8) {
+                        Button("Reveal in Finder") { appState.revealDebugLogInFinder() }
+                        Button("Copy Log") { _ = appState.copyDebugLogToPasteboard() }
+                        Button("Clear") { appState.clearDebugLog() }
+                    }
+                    .controlSize(.small)
                 }
             }
+            .listStyle(.inset(alternatesRowBackgrounds: true))
+
             Divider()
+
             AddCustomRuleRow()
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color(nsColor: .controlBackgroundColor).opacity(0.3))
+        }
+    }
+
+    private func categoryIcon(_ category: PIICategory) -> String {
+        switch category {
+        case .email: return "envelope.fill"
+        case .phoneNumber: return "phone.fill"
+        case .ssn: return "person.text.rectangle.fill"
+        case .creditCard: return "creditcard.fill"
+        case .awsKey: return "cloud.fill"
+        case .genericApiKey: return "key.fill"
+        case .ipv4Address: return "network"
+        case .envSecret: return "lock.shield.fill"
+        case .envFile: return "doc.text.fill"
+        }
+    }
+
+    private func categoryDescription(_ category: PIICategory) -> String {
+        switch category {
+        case .email: return "Personal and business email addresses"
+        case .phoneNumber: return "US and international phone formats"
+        case .ssn: return "Social Security Numbers (###-##-####)"
+        case .creditCard: return "Visa, Mastercard, Amex, Discover with Luhn validation"
+        case .awsKey: return "AWS Access Key IDs (AKIA...)"
+        case .genericApiKey: return "OpenAI, Anthropic, Stripe, GitHub, and Slack keys"
+        case .ipv4Address: return "Public and private IPv4 network addresses"
+        case .envSecret: return "SECRET=, TOKEN=, and PASSWORD= key-value pairs"
+        case .envFile: return "Bulk .env configuration file paste detections"
         }
     }
 }
@@ -203,22 +289,24 @@ private struct AddProviderRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Add a domain to intercept").font(.caption).foregroundStyle(.secondary)
-            HStack {
-                TextField("domain, e.g. internal-llm.example.com", text: $host)
+            Text("Add Intercepted Domain").font(.caption).fontWeight(.medium).foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                TextField("Domain (e.g. api.mistral.ai)", text: $host)
                     .textFieldStyle(.roundedBorder)
-                TextField("name (optional)", text: $name)
+                TextField("Provider Name", text: $name)
                     .textFieldStyle(.roundedBorder)
-                    .frame(width: 140)
-                Button("Add") {
+                    .frame(width: 150)
+                Button("Add Domain") {
                     if appState.addProvider(host: host, name: name) {
                         host = ""
                         name = ""
                         errorMessage = nil
                     } else {
-                        errorMessage = "Enter a new domain that isn't already in the list."
+                        errorMessage = "Domain is already in the list or invalid."
                     }
                 }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
                 .disabled(host.trimmingCharacters(in: .whitespaces).isEmpty)
             }
             if let errorMessage {
@@ -237,24 +325,26 @@ private struct AddCustomRuleRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Add a custom rule").font(.caption).foregroundStyle(.secondary)
-            HStack {
-                TextField("name (optional)", text: $label)
+            Text("Add Custom Rule").font(.caption).fontWeight(.medium).foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                TextField("Rule Label", text: $label)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 140)
-                TextField(isRegex ? "regular expression" : "keyword or phrase", text: $pattern)
+                TextField(isRegex ? "Regular Expression" : "Keyword or Phrase", text: $pattern)
                     .textFieldStyle(.roundedBorder)
                 Toggle("Regex", isOn: $isRegex)
                     .toggleStyle(.checkbox)
-                Button("Add") {
+                Button("Add Rule") {
                     if appState.addCustomRule(label: label, pattern: pattern, isRegex: isRegex) {
                         label = ""
                         pattern = ""
                         errorMessage = nil
                     } else {
-                        errorMessage = isRegex ? "Enter a valid, non-empty regular expression." : "Enter a non-empty keyword or phrase."
+                        errorMessage = isRegex ? "Invalid regular expression pattern." : "Enter a non-empty phrase."
                     }
                 }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
                 .disabled(pattern.trimmingCharacters(in: .whitespaces).isEmpty)
             }
             if let errorMessage {
@@ -270,61 +360,98 @@ private struct CLIEnvSection: View {
     @State private var statusMessage: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Label("Auto-installs to ~/.zshrc, ~/.zshenv, ~/.bashrc, fish on toggle ON. Toggle OFF unsets — new shells go DIRECT. No restart needed for browsers.", systemImage: "checkmark.circle.fill")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Text(appState.cliShellSnippet)
-                .font(.system(.caption, design: .monospaced))
-                .textSelection(.enabled)
-                .padding(6)
-                .background(Color.secondary.opacity(0.12))
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("Shell Startup Hook")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    if didCopy {
+                        Label("Copied", systemImage: "checkmark")
+                            .font(.caption2)
+                            .foregroundStyle(.green)
+                    }
+                }
+
+                HStack {
+                    Text(appState.cliShellSnippet)
+                        .font(.system(size: 11, design: .monospaced))
+                        .lineLimit(2)
+                        .textSelection(.enabled)
+                    Spacer()
+                    Button {
+                        let pb = NSPasteboard.general
+                        pb.clearContents()
+                        pb.setString(appState.cliShellSnippet, forType: .string)
+                        didCopy = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { didCopy = false }
+                    } label: {
+                        Image(systemName: didCopy ? "checkmark" : "doc.on.doc")
+                    }
+                    .buttonStyle(.borderless)
+                    .help("Copy shell snippet")
+                }
+                .padding(8)
+                .background(Color(nsColor: .textBackgroundColor).opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+                )
                 .clipShape(RoundedRectangle(cornerRadius: 6))
-            Text("Env file: \(appState.cliEnvFileURL.path) — also sets NODE_EXTRA_CA_CERTS for claude code.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .textSelection(.enabled)
+            }
+
             HStack(spacing: 8) {
-                Button(didCopy ? "Copied!" : "Copy snippet") {
+                Button {
                     let pb = NSPasteboard.general
                     pb.clearContents()
                     pb.setString(appState.cliShellSnippet, forType: .string)
                     didCopy = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { didCopy = false }
+                } label: {
+                    Label("Copy Snippet", systemImage: "doc.on.doc")
                 }
-                Button("Reveal env file") { appState.revealCLIEnvFileInFinder() }
-                Button("Re-apply now") {
+
+                Button {
+                    appState.revealCLIEnvFileInFinder()
+                } label: {
+                    Label("Reveal Env File", systemImage: "folder")
+                }
+
+                Button {
                     let urls = appState.installCLIShellIntegration()
-                    statusMessage = urls.isEmpty ? "Already configured" : "Updated \(urls.map(\.lastPathComponent).joined(separator: ", "))"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { statusMessage = nil }
+                    statusMessage = urls.isEmpty ? "Shell profiles already configured" : "Updated: \(urls.map(\.lastPathComponent).joined(separator: ", "))"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { statusMessage = nil }
+                } label: {
+                    Label("Re-apply to Shells", systemImage: "arrow.clockwise")
+                }
+
+                if appState.autoInjectIntoTerminal {
+                    Button {
+                        let result = TerminalInjector.injectIntoOpenTabs(shellCommand: appState.cliShellSnippet)
+                        switch result {
+                        case .success(let count):
+                            statusMessage = count == 0 ? "No idle Terminal tabs found" : "Injected into \(count) tab\(count == 1 ? "" : "s")"
+                        case .failure(let error):
+                            statusMessage = error.localizedDescription
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { statusMessage = nil }
+                    } label: {
+                        Label("Inject Open Tabs", systemImage: "terminal")
+                    }
                 }
             }
-            .font(.caption)
-            if let statusMessage { Text(statusMessage).font(.caption2).foregroundStyle(.secondary) }
-            Text("Open a NEW Terminal after toggling — existing shells need `source \"\(appState.cliEnvFileURL.path)\"`. Verify: curl -v https://api.anthropic.com  # 403 on PII when ON")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .textSelection(.enabled)
+            .buttonStyle(.bordered)
+            .controlSize(.small)
 
-            Divider().padding(.vertical, 2)
-
-            Toggle("Auto-update open Terminal.app tabs on toggle", isOn: $appState.autoInjectIntoTerminal)
-            Text("When on, toggling protection also runs the source command above in every open, idle Terminal.app tab automatically -- no need to open a new one. Busy tabs (vim, ssh, an active build) are skipped so nothing running gets interrupted. Terminal.app only -- Electron-based terminals (Hyper, and most others) don't support this kind of automation.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            if appState.autoInjectIntoTerminal {
-                Button("Update open Terminal tabs now") {
-                    let result = TerminalInjector.injectIntoOpenTabs(shellCommand: appState.cliShellSnippet)
-                    switch result {
-                    case .success(let count):
-                        statusMessage = count == 0 ? "No open, idle Terminal.app tabs found" : "Updated \(count) tab\(count == 1 ? "" : "s")"
-                    case .failure(let error):
-                        statusMessage = error.localizedDescription
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { statusMessage = nil }
-                }
-                .font(.caption)
+            if let statusMessage {
+                Text(statusMessage)
+                    .font(.caption2)
+                    .foregroundStyle(.blue)
+                    .transition(.opacity)
             }
         }
+        .padding(.vertical, 4)
     }
 }
