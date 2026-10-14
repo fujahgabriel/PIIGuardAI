@@ -46,6 +46,10 @@ enum DefaultProviders {
         ProviderDomain(host: "models.opencode.ai", providerName: "opencode"),
         ProviderDomain(host: "api.opencode.ai", providerName: "opencode"),
         ProviderDomain(host: "openrouter.ai", providerName: "OpenRouter"),
+        ProviderDomain(host: "meta.ai", providerName: "Meta AI"),
+        ProviderDomain(host: "www.meta.ai", providerName: "Meta AI"),
+        ProviderDomain(host: "spark.meta.com", providerName: "Meta Spark"),
+        ProviderDomain(host: "llama.meta.com", providerName: "Meta Llama"),
         ProviderDomain(host: "api.groq.com", providerName: "Groq"),
         ProviderDomain(host: "api.together.xyz", providerName: "Together AI"),
     ]
