@@ -27,9 +27,13 @@ enum DefaultProviders {
         ProviderDomain(host: "chatgpt.com", providerName: "ChatGPT"),
         ProviderDomain(host: "chat.openai.com", providerName: "ChatGPT"),
         ProviderDomain(host: "api.openai.com", providerName: "OpenAI API"),
+        ProviderDomain(host: "api.deepseek.com", providerName: "DeepSeek"),
+        ProviderDomain(host: "deepseek.com", providerName: "DeepSeek"),
         ProviderDomain(host: "gemini.google.com", providerName: "Gemini"),
         ProviderDomain(host: "generativelanguage.googleapis.com", providerName: "Google AI API / Antigravity"),
         ProviderDomain(host: "aiplatform.googleapis.com", providerName: "Vertex AI / Antigravity"),
+        ProviderDomain(host: "cloudcode-pa.googleapis.com", providerName: "Google Cloud Code"),
+        ProviderDomain(host: "daily-cloudcode-pa.googleapis.com", providerName: "Google Cloud Code"),
         ProviderDomain(host: "antigravity.google", providerName: "Antigravity"),
         ProviderDomain(host: "antigravity.dev", providerName: "Antigravity"),
         ProviderDomain(host: "api.cohere.ai", providerName: "Cohere API"),
@@ -40,6 +44,9 @@ enum DefaultProviders {
         ProviderDomain(host: "api.perplexity.ai", providerName: "Perplexity API"),
         ProviderDomain(host: "opencode.ai", providerName: "opencode"),
         ProviderDomain(host: "models.opencode.ai", providerName: "opencode"),
+        ProviderDomain(host: "api.opencode.ai", providerName: "opencode"),
         ProviderDomain(host: "openrouter.ai", providerName: "OpenRouter"),
+        ProviderDomain(host: "api.groq.com", providerName: "Groq"),
+        ProviderDomain(host: "api.together.xyz", providerName: "Together AI"),
     ]
 }

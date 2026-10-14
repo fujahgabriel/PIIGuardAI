@@ -435,16 +435,26 @@ final class AppState: ObservableObject {
     // MARK: - Event log
 
     private func record(_ event: TrafficEvent, persist: Bool) {
-        events.insert(event, at: 0)
-        if events.count > 1000 { events.removeLast(events.count - 1000) }
-        if persist { activityStore.append(event) }
-        switch event.outcome {
-        case .blocked:
-            BlockNotifier.notifyBlocked(providerName: event.providerName, categories: event.matchedCategories, detectionPreviews: event.detectionPreviews)
-        case .redacted:
-            BlockNotifier.notifyRedacted(providerName: event.providerName, categories: event.matchedCategories, detectionPreviews: event.detectionPreviews)
-        case .allowed, .allowedUnscanned:
-            break
+        let action = { [weak self] in
+            guard let self else { return }
+            self.events.insert(event, at: 0)
+            if self.events.count > 1000 { self.events.removeLast(self.events.count - 1000) }
+            if persist { self.activityStore.append(event) }
+            self.scheduleWidgetSnapshot()
+            switch event.outcome {
+            case .blocked:
+                BlockNotifier.notifyBlocked(providerName: event.providerName, categories: event.matchedCategories, detectionPreviews: event.detectionPreviews)
+            case .redacted:
+                BlockNotifier.notifyRedacted(providerName: event.providerName, categories: event.matchedCategories, detectionPreviews: event.detectionPreviews)
+            case .allowed, .allowedUnscanned:
+                break
+            }
+        }
+
+        if Thread.isMainThread {
+            action()
+        } else {
+            DispatchQueue.main.async(execute: action)
         }
     }
 
