@@ -35,6 +35,7 @@
 		7D0D35DF8561E83929ED4E00 /* PIIGuardHelper in Resources */ = {isa = PBXBuildFile; fileRef = 9DD10CDDC7C7DD9C5ECDCB1D /* PIIGuardHelper */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7D3F2D568F18436EC0DA6894 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDAF7373B47CAD6882CC39 /* LoginItemManager.swift */; };
 		7FFCE832FBC72211824DBDD7 /* CLIProxyEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = F37456D67F741DFA2FBA11B9 /* CLIProxyEnv.swift */; };
+		83B80ABF2F92A9B2A3107B9E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8B77898F26AA6F0BB3120CB /* Assets.xcassets */; };
 		8B41993F1BFB1C890D74CAD8 /* PIIGuardWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8F238C5DC1AE3F40817B72E6 /* PIIGuardWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9019428F799CC48E8FC428B2 /* TLSSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C02A52F5C4886E951A3F0F /* TLSSocket.swift */; };
 		912042B5B06440040B8AB77C /* PIIRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02AC2066FABC648C14DD9E8F /* PIIRule.swift */; };
@@ -353,6 +354,7 @@
 			buildConfigurationList = 0E822873A35B4558492B158A /* Build configuration list for PBXNativeTarget "PIIGuardWidget" */;
 			buildPhases = (
 				E07DC35F1262EE5E144CC47C /* Sources */,
+				72A83B589E9F5C97F6613F1A /* Resources */,
 			);
 			buildRules = (
 			);
@@ -420,6 +422,14 @@
 			files = (
 				CFA5B271B0345284920C4027 /* Assets.xcassets in Resources */,
 				7D0D35DF8561E83929ED4E00 /* PIIGuardHelper in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		72A83B589E9F5C97F6613F1A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83B80ABF2F92A9B2A3107B9E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,6 +535,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/WidgetExtension/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -745,6 +756,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/WidgetExtension/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
