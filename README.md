@@ -64,11 +64,18 @@ PIIGuard AI protects sensitive data across three primary workflows via a dual-ch
   * Claude (`claude.ai`)
   * ChatGPT (`chatgpt.com`, `chat.openai.com`)
   * Gemini (`gemini.google.com`)
+  * DeepSeek (`deepseek.com`, `api.deepseek.com`)
+  * Meta AI (`meta.ai`, `www.meta.ai`) & Meta Spark (`spark.meta.com`)
   * Perplexity (`perplexity.ai`)
   * Grok (`grok.com`)
   * Custom domains added via **Settings > Providers**.
 * **Zero Latency for Normal Browsing**: Non-AI traffic (Google, YouTube, GitHub, internal networks, banking) bypasses the proxy entirely (`DIRECT`) with no overhead or latency.
 * **Seamless Trust**: The local root certificate is automatically installed into the macOS Keychain as trusted, preventing SSL warning screens.
+
+<p align="center">
+  <img src="assets/claude-redacted.png" alt="Auto-Redaction in Claude.ai" width="680" />
+</p>
+<p align="center"><em>Real prompt containing an email and credit card number automatically sanitized by PIIGuard AI before reaching Claude.</em></p>
 
 ### 2. Command-Line Tools & Terminal (Full Automation)
 * **Interception Mechanism**: Standard CLI tools do not evaluate PAC files. PIIGuard AI manages standard proxy and TLS environment variables:
