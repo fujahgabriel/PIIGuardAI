@@ -43,6 +43,7 @@
 		B2344473BE434F8BB4AA7FC8 /* BlockNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D4316FD7CF76113E74F374 /* BlockNotifier.swift */; };
 		C725FDF1249731E8DB408A93 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E29CF855D2F891E2629DBE /* AppDelegate.swift */; };
 		CF05DBABE6B370F0DD6F3DFD /* POSIXSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594293F52D884CB6CA2A0316 /* POSIXSocket.swift */; };
+		CFA5B271B0345284920C4027 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8B77898F26AA6F0BB3120CB /* Assets.xcassets */; };
 		DB3B5B27714E6DBB062416C8 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC07EE1BC27B72181B7ABD /* main.swift */; };
 		E6DF49F35D1936FCD4AEA06A /* PIIDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27D2377C51253E17879D4D9 /* PIIDetector.swift */; };
 		EE054E77E1EDF73618937F5C /* AppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C35E8AAC0C7A2ADA68D30F9 /* AppIdentity.swift */; };
@@ -110,6 +111,7 @@
 		B315EEE2161F3EB36AE1D493 /* MITMProxyServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MITMProxyServer.swift; sourceTree = "<group>"; };
 		BDC88FBD1E953BD3D698DB75 /* SystemProxyConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemProxyConfigurator.swift; sourceTree = "<group>"; };
 		C3BC03D4AEEB9EAFEA6AEA79 /* WidgetDataSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataSnapshot.swift; sourceTree = "<group>"; };
+		C8B77898F26AA6F0BB3120CB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CABA0B4B2DEB7B5E6ECF98CC /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
 		D058BFBCC94465FD58154C12 /* TerminalInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalInjector.swift; sourceTree = "<group>"; };
 		DD8FD97D551417CEE1AA21EC /* DebugBodyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugBodyStore.swift; sourceTree = "<group>"; };
@@ -216,6 +218,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		6EC72D50DC4B08090A7F357E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C8B77898F26AA6F0BB3120CB /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		728EB94FCA47BAAF86596F02 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -240,6 +250,7 @@
 				4812267396A42F6FAED93E0A /* Notifications */,
 				FA1710BED5F0775F9A66E793 /* PII */,
 				0568810E1F4EB27C83F71335 /* Proxy */,
+				6EC72D50DC4B08090A7F357E /* Resources */,
 				132E64524E225695E44C2111 /* System */,
 				F436B03ED02274ECA9A83AFE /* Views */,
 			);
@@ -404,6 +415,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFA5B271B0345284920C4027 /* Assets.xcassets in Resources */,
 				7D0D35DF8561E83929ED4E00 /* PIIGuardHelper in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

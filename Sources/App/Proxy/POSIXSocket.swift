@@ -3,8 +3,16 @@ import Foundation
 import Darwin
 #endif
 
-enum POSIXSocketError: Error {
+enum POSIXSocketError: Error, LocalizedError {
     case failed(String, Int32)
+
+    var errorDescription: String? {
+        switch self {
+        case .failed(let op, let err):
+            let desc = String(cString: strerror(err))
+            return "\(op) failed: \(desc) (code \(err))"
+        }
+    }
 }
 
 /// Thin wrappers around BSD sockets. We use raw sockets (rather than
@@ -20,6 +28,9 @@ enum POSIXSocket {
 
         var reuse: Int32 = 1
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, socklen_t(MemoryLayout<Int32>.size))
+        #if canImport(Darwin)
+        setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &reuse, socklen_t(MemoryLayout<Int32>.size))
+        #endif
 
         var addr = sockaddr_in()
         addr.sin_family = sa_family_t(AF_INET)

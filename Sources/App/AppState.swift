@@ -5,12 +5,12 @@ import AppKit
 @MainActor
 final class AppState: ObservableObject {
     @Published private(set) var isProtecting = false {
-        didSet { publishWidgetSnapshot() }
+        didSet { scheduleWidgetSnapshot() }
     }
     @Published private(set) var isBusy = false
     @Published var lastError: String?
     @Published private(set) var events: [TrafficEvent] = [] {
-        didSet { publishWidgetSnapshot() }
+        didSet { scheduleWidgetSnapshot() }
     }
     @Published var providers: [ProviderDomain]
     @Published var customRules: [CustomRule] {
@@ -106,6 +106,18 @@ final class AppState: ObservableObject {
 
     private var proxyDelegateBridge: ProxyDelegateBridge?
 
+    /// Debounces widget snapshot publishing so that a burst of quickly-
+    /// recorded events (a browser page load triggers dozens) doesn't iterate
+    /// all 1 000 stored events and call `dailyCounts` on each one.
+    private var widgetPublishWork: DispatchWorkItem?
+
+    private func scheduleWidgetSnapshot() {
+        widgetPublishWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in self?.publishWidgetSnapshot() }
+        widgetPublishWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: work)
+    }
+
     init() {
         self.providers = Self.loadProviders()
         self.customRules = Self.loadCustomRules()
@@ -124,28 +136,35 @@ final class AppState: ObservableObject {
 
         events = Array(activityStore.loadAll().prefix(1000))
         publishWidgetSnapshot()
+
+        if UserDefaults.standard.bool(forKey: Self.protectionEnabledKey) {
+            startProtection()
+        } else {
+            SystemProxyConfigurator.cleanOrphanedProxies()
+        }
     }
 
     // MARK: - Protection lifecycle
 
     func startProtection() {
-        guard !isProtecting else { return }
+        guard !isProtecting, !isBusy else { return }
         isBusy = true
         lastError = nil
+        UserDefaults.standard.set(true, forKey: Self.protectionEnabledKey)
         Task {
             do {
                 try await Task.detached(priority: .userInitiated) { [ca, proxy, pacFileServer, helperClient, providers = providers, proxyPort, pacServerPort, autoInjectIntoTerminal] in
                     try ca.loadOrCreate()
 
-                    // Written to disk too, purely for reference -- the *active*
-                    // config points browsers at pacFileServer's HTTP URL below,
-                    // since Chromium refuses file:// PAC scripts outright.
+                    // Start local listeners first so ports are active immediately
                     let pacDiskURL = SystemProxyConfigurator.pacFileURL(appSupportDirectory: ca.appSupportDirectory)
                     let pacContent = SystemProxyConfigurator.pacScript(proxyPort: proxyPort, providers: providers)
                     try? pacContent.write(to: pacDiskURL, atomically: true, encoding: .utf8)
                     pacFileServer.updateContent(Data(pacContent.utf8))
                     try pacFileServer.start()
                     let pacServerURL = URL(string: "http://127.0.0.1:\(pacServerPort)/proxy.pac")!
+
+                    try proxy.start()
 
                     // CLI coverage: PAC only affects browsers. Auto-deploy shell + launchctl so
                     // claude code / codex / curl in Terminal + VS Code pick up the proxy without manual steps.
@@ -159,49 +178,54 @@ final class AppState: ObservableObject {
                         }
                     }
 
-                    // CA trust goes into the login keychain directly -- no elevation
-                    // needed, no interactive prompt, and re-asserted on every start
-                    // since a cert *item* can persist in the keychain without actually
-                    // carrying trust settings (e.g. if trust was ever stripped
-                    // out-of-band while the item itself remained). See
-                    // TrustStoreInstaller's doc comment for why this targets the login
-                    // keychain rather than the System keychain.
+                    // CA trust into login keychain (checks verify-cert first so no prompt if already trusted)
                     try TrustStoreInstaller.install(certificateAt: ca.certificateFileURL)
 
-                    do {
-                        // Primary path: one-time helper install (if needed), then no
-                        // more prompts for this or any future toggle for the system
-                        // proxy configuration (the only remaining step that needs root).
-                        try helperClient.ensureInstalled()
-                        let services = try SystemProxyConfigurator.servicesToEnable()
-                        for service in services {
-                            try helperClient.setAutoProxy(service: service, urlString: pacServerURL.absoluteString, enabled: true)
-                        }
-                    } catch {
-                        // Fallback: helper install was declined/failed -- fall back to
-                        // one-off osascript elevation, like before the helper existed.
-                        let commands = try SystemProxyConfigurator.buildEnableCommands(pacServerURL: pacServerURL)
-                        if !commands.isEmpty {
-                            _ = try PrivilegedRunner.run(commands)
+                    // Configure system auto-proxy:
+                    // 1. Try direct non-privileged networksetup first (often permitted for current user's Wi-Fi)
+                    let services = try SystemProxyConfigurator.servicesToEnable()
+                    var directSucceeded = true
+                    for service in services {
+                        if !SystemProxyConfigurator.setAutoProxyDirect(service: service, url: pacServerURL, enabled: true) {
+                            directSucceeded = false
                         }
                     }
-
-                    try proxy.start()
+                    if !directSucceeded {
+                        do {
+                            try helperClient.ensureInstalled()
+                            for service in services {
+                                try helperClient.setAutoProxy(service: service, urlString: pacServerURL.absoluteString, enabled: true)
+                            }
+                        } catch {
+                            let commands = try SystemProxyConfigurator.buildEnableCommands(pacServerURL: pacServerURL)
+                            if !commands.isEmpty {
+                                _ = try PrivilegedRunner.run(commands)
+                            }
+                        }
+                    }
                 }.value
                 isProtecting = true
+                lastError = nil
             } catch {
+                proxy.stop()
+                pacFileServer.stop()
                 lastError = Self.describe(error)
+                UserDefaults.standard.set(false, forKey: Self.protectionEnabledKey)
             }
             isBusy = false
         }
     }
 
     func stopProtection() {
-        guard isProtecting else { return }
-        isBusy = true
-        lastError = nil
         proxy.stop()
         pacFileServer.stop()
+        guard isProtecting || UserDefaults.standard.bool(forKey: Self.protectionEnabledKey) else {
+            SystemProxyConfigurator.cleanOrphanedProxies()
+            return
+        }
+        isBusy = true
+        lastError = nil
+        UserDefaults.standard.set(false, forKey: Self.protectionEnabledKey)
         // Don't break existing shells: overwrite env file with unsets and clear launchctl so new terminals go DIRECT.
         try? CLIProxyEnv.writeDisabledEnvFile(appSupportDirectory: ca.appSupportDirectory)
         CLIProxyEnv.unsetLaunchctlEnv()
@@ -215,18 +239,28 @@ final class AppState: ObservableObject {
             do {
                 try await Task.detached(priority: .userInitiated) { [helperClient] in
                     let services = SystemProxyConfigurator.touchedServices()
-                    guard !services.isEmpty else { return }
-                    do {
-                        for service in services {
-                            try helperClient.setAutoProxy(service: service, urlString: nil, enabled: false)
-                        }
-                        SystemProxyConfigurator.clearTouchedServices()
-                    } catch {
-                        let commands = SystemProxyConfigurator.buildDisableCommands()
-                        if !commands.isEmpty {
-                            _ = try PrivilegedRunner.run(commands)
+                    var directSucceeded = true
+                    for service in services {
+                        if !SystemProxyConfigurator.disableAutoProxyDirect(service: service) {
+                            directSucceeded = false
                         }
                     }
+                    if directSucceeded {
+                        SystemProxyConfigurator.clearTouchedServices()
+                    } else {
+                        do {
+                            for service in services {
+                                try helperClient.setAutoProxy(service: service, urlString: nil, enabled: false)
+                            }
+                            SystemProxyConfigurator.clearTouchedServices()
+                        } catch {
+                            let commands = SystemProxyConfigurator.buildDisableCommands()
+                            if !commands.isEmpty {
+                                _ = try PrivilegedRunner.run(commands)
+                            }
+                        }
+                    }
+                    SystemProxyConfigurator.cleanOrphanedProxies()
                 }.value
             } catch {
                 lastError = Self.describe(error)
@@ -470,6 +504,7 @@ final class AppState: ObservableObject {
     private static let customRulesKey = AppIdentity.defaultsKey("customRules")
     private static let autoRedactKey = AppIdentity.defaultsKey("autoRedactEnabled")
     private static let autoInjectKey = AppIdentity.defaultsKey("autoInjectIntoTerminal")
+    private static let protectionEnabledKey = AppIdentity.defaultsKey("protectionEnabled")
 
     private static func loadProviders() -> [ProviderDomain] {
         guard let data = UserDefaults.standard.data(forKey: providersKey),

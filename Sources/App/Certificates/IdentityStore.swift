@@ -72,7 +72,10 @@ final class IdentityStore {
         let caSubjectKeyID = SubjectKeyIdentifier(hash: Certificate.PublicKey(caKey.publicKey))
         let extensions = try Certificate.Extensions {
             Critical(BasicConstraints.notCertificateAuthority)
-            Critical(KeyUsage(digitalSignature: true, keyEncipherment: true))
+            // RFC 5480 §3: keyEncipherment MUST NOT be set for ECDSA keys.
+            // Marking keyEncipherment as critical causes BoringSSL / Chrome to
+            // reject the leaf certificate with ERR_CERT_INVALID / handshake failure.
+            Critical(KeyUsage(digitalSignature: true))
             try ExtendedKeyUsage([.serverAuth])
             SubjectAlternativeNames([.dnsName(host)])
             AuthorityKeyIdentifier(keyIdentifier: caSubjectKeyID.keyIdentifier)

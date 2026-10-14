@@ -66,7 +66,7 @@ final class MITMProxyServer {
     }
 
     func start() throws {
-        guard !isRunning else { return }
+        stop()
         Self.raiseFileDescriptorLimit()
         let fd = try POSIXSocket.makeLoopbackListener(port: port)
         listenerFD = fd
@@ -135,8 +135,16 @@ final class MITMProxyServer {
             parsed = HTTPParser.parseHead([UInt8](buffer))
             if buffer.count > 65536 { Darwin.close(clientFD); return }
         }
-        guard let head = parsed?.head, head.method.uppercased() == "CONNECT",
+        guard let head = parsed?.head else {
+            Darwin.close(clientFD); return
+        }
+        guard head.method.uppercased() == "CONNECT",
               let target = HTTPParser.parseConnectTarget(head.target) else {
+            // Non-CONNECT request (e.g. plain HTTP via HTTP_PROXY without a
+            // CONNECT tunnel). Return a readable error instead of a silent
+            // connection reset so the calling tool can diagnose the problem.
+            let response = Self.badRequestResponse()
+            _ = try? POSIXSocket.writeAll(clientFD, response)
             Darwin.close(clientFD); return
         }
 
@@ -146,15 +154,20 @@ final class MITMProxyServer {
         }
 
         let host = target.host
+        NSLog("%@", "[PIIGuardProxy] CONNECT tunnel to \(target.host):\(target.port)")
         guard let identity = try? identityStore.identity(forHost: host) else {
+            NSLog("%@", "[PIIGuardProxy] FAILED to get identity for \(host)")
             Darwin.close(clientFD); return
         }
         guard let clientTLS = try? TLSSocket(fd: clientFD, role: .server(identity: identity)) else {
+            NSLog("%@", "[PIIGuardProxy] FAILED to create server TLSSocket for \(host)")
             Darwin.close(clientFD); return
         }
         do {
             try clientTLS.handshake()
+            NSLog("%@", "[PIIGuardProxy] Client TLS handshake SUCCEEDED for \(host)")
         } catch {
+            NSLog("%@", "[PIIGuardProxy] Client TLS handshake FAILED for \(host): \(error)")
             clientTLS.close()
             return
         }
@@ -173,9 +186,18 @@ final class MITMProxyServer {
     /// response, and returns whether the client tunnel should stay open for
     /// another request.
     private func serveOneExchange(host: String, providerName: String, isProviderHost: Bool, port: UInt16, clientTLS: TLSSocket) -> Bool {
-        guard let (head, body) = try? readFullClientRequest(clientTLS) else {
+        let (head, body): (HTTPRequestHead, Data?)
+        do {
+            guard let req = try readFullClientRequest(clientTLS) else {
+                NSLog("%@", "[PIIGuardProxy] readFullClientRequest returned nil for \(host)")
+                return false
+            }
+            (head, body) = req
+        } catch {
+            NSLog("%@", "[PIIGuardProxy] readFullClientRequest threw for \(host): \(error)")
             return false
         }
+        NSLog("%@", "[PIIGuardProxy] Request: \(head.method) https://\(host)\(head.target)")
 
         // Only scan LLM provider traffic. When via HTTP_PROXY (CLI env) everything
         // hits the proxy, but scanning datadog/downloads/mcp-proxy creates false
@@ -205,12 +227,9 @@ final class MITMProxyServer {
 
         if !matches.isEmpty {
             let categories = Array(Set(matches.map(\.categoryName))).sorted()
-            // "<category>: <redacted preview>" per match, e.g. "email address: jo***te" --
-            // never the raw matched text (see TrafficEvent's doc comment).
             let detectionPreviews = matches
                 .sorted { $0.categoryName < $1.categoryName }
                 .map { "\($0.categoryName): \($0.redactedPreview)" }
-            // Opt-in raw body log for false-positive diagnosis (0600, truncated)
             logger?(host, providerName, categories, body)
 
             let allRedactable = matches.allSatisfy { $0.range.location != NSNotFound && $0.range.length > 0 }
@@ -228,18 +247,17 @@ final class MITMProxyServer {
         return forward(head: head, body: effectiveBody, host: host, providerName: providerName, port: port, clientTLS: clientTLS, notifyOutcome: scanned ? .allowed : .allowedUnscanned)
     }
 
-    /// Connects upstream, sends `body`, relays the response back, and
-    /// returns whether the client tunnel should stay open for another
-    /// request. `notifyOutcome` is skipped when the caller already recorded
-    /// its own event (the redact path logs `.redacted` before calling this).
     private func forward(head: HTTPRequestHead, body: Data?, host: String, providerName: String, port: UInt16, clientTLS: TLSSocket, notifyOutcome: TrafficEvent.Outcome? = nil) -> Bool {
+        let isWebSocket = head.headers["upgrade"]?.lowercased() == "websocket"
         let forwardRequest = Self.buildForwardedRequest(head: head, body: body)
 
         guard let upstreamFD = try? POSIXSocket.connect(host: host, port: port) else {
+            NSLog("%@", "[PIIGuardProxy] POSIXSocket.connect FAILED for \(host):\(port)")
             try? clientTLS.write(Self.upstreamErrorResponse())
             return false
         }
         guard let upstreamTLS = try? TLSSocket(fd: upstreamFD, role: .client(sniHostname: host)) else {
+            NSLog("%@", "[PIIGuardProxy] TLSSocket creation FAILED for \(host)")
             Darwin.close(upstreamFD)
             try? clientTLS.write(Self.upstreamErrorResponse())
             return false
@@ -247,28 +265,169 @@ final class MITMProxyServer {
         do {
             try upstreamTLS.handshake()
         } catch {
+            NSLog("%@", "[PIIGuardProxy] upstreamTLS.handshake FAILED for \(host): \(error)")
             upstreamTLS.close()
             try? clientTLS.write(Self.upstreamErrorResponse())
             return false
         }
         defer { upstreamTLS.close() }
 
-        guard (try? upstreamTLS.write(forwardRequest)) != nil else { return false }
+        do {
+            try upstreamTLS.write(forwardRequest)
+        } catch {
+            NSLog("%@", "[PIIGuardProxy] upstreamTLS.write FAILED for \(host): \(error)")
+            return false
+        }
 
         if let notifyOutcome {
             notify(host: host, providerName: providerName, outcome: notifyOutcome, categories: [])
         }
 
-        relay(from: upstreamTLS, to: clientTLS)
-        return head.headers["connection"]?.lowercased() != "close"
+        NSLog("%@", "[PIIGuardProxy] Relay starting: \(head.method) https://\(host)\(head.target)")
+        if isWebSocket {
+            relayBidirectional(clientTLS, upstreamTLS)
+        } else {
+            relay(from: upstreamTLS, to: clientTLS, isHead: head.method.uppercased() == "HEAD")
+        }
+        NSLog("%@", "[PIIGuardProxy] Relay finished: \(head.method) https://\(host)\(head.target)")
+        return false
     }
 
-    private func relay(from source: TLSSocket, to destination: TLSSocket) {
-        // Use small reads to avoid buffering the SSE stream (Claude Code 3m timeout)
+    private func relay(from source: TLSSocket, to destination: TLSSocket, isHead: Bool = false) {
+        var headerBuffer = Data()
+        var responseHead: HTTPResponseHead?
+        var bodyBytesRelayed = 0
+        var expectedContentLength: Int?
+        var isChunked = false
+        var isNoBody = false
+
         while true {
-            guard let chunk = try? source.read(maxLength: 8192), !chunk.isEmpty else { break }
-            guard (try? destination.write(chunk)) != nil else { break }
+            guard let chunk = try? source.read(maxLength: 8192), !chunk.isEmpty else {
+                NSLog("%@", "[PIIGuardProxy] source.read returned empty/closed (relayed \(bodyBytesRelayed) bytes)")
+                break
+            }
+
+            if responseHead == nil {
+                headerBuffer.append(chunk)
+                if let (parsed, bodyOffset) = HTTPParser.parseResponseHead([UInt8](headerBuffer)) {
+                    responseHead = parsed
+                    expectedContentLength = parsed.contentLength
+                    isChunked = parsed.isChunked
+                    isNoBody = isHead || parsed.isNoBodyStatus
+                    NSLog("%@", "[PIIGuardProxy] Response status: \(parsed.statusCode), contentLength: \(String(describing: parsed.contentLength)), chunked: \(isChunked), noBody: \(isNoBody)")
+
+                    let (rewrittenHeaders, trailingBody) = prepareResponseHeaders(headerBuffer, head: parsed, bodyOffset: bodyOffset)
+                    do {
+                        try destination.write(rewrittenHeaders)
+                    } catch {
+                        NSLog("%@", "[PIIGuardProxy] destination.write headers FAILED: \(error)")
+                        break
+                    }
+
+                    if isNoBody {
+                        NSLog("%@", "[PIIGuardProxy] Response has no body, relay complete")
+                        break
+                    }
+
+                    if !trailingBody.isEmpty {
+                        do {
+                            try destination.write(trailingBody)
+                        } catch {
+                            NSLog("%@", "[PIIGuardProxy] destination.write trailingBody FAILED: \(error)")
+                            break
+                        }
+                        bodyBytesRelayed += trailingBody.count
+
+                        if let expected = expectedContentLength, bodyBytesRelayed >= expected {
+                            NSLog("%@", "[PIIGuardProxy] Content-Length reached in initial buffer: \(bodyBytesRelayed)/\(expected)")
+                            break
+                        }
+                        if isChunked, hasTerminalChunk(in: trailingBody) {
+                            NSLog("%@", "[PIIGuardProxy] Terminal chunk found in initial buffer")
+                            break
+                        }
+                    }
+                    headerBuffer.removeAll()
+                    continue
+                }
+                if headerBuffer.count > 1_000_000 { break }
+                continue
+            }
+
+            // Headers were already sent; relay this body chunk directly
+            do {
+                try destination.write(chunk)
+            } catch {
+                NSLog("%@", "[PIIGuardProxy] destination.write body chunk FAILED: \(error)")
+                break
+            }
+            bodyBytesRelayed += chunk.count
+
+            if let expected = expectedContentLength, bodyBytesRelayed >= expected {
+                NSLog("%@", "[PIIGuardProxy] Content-Length reached: \(bodyBytesRelayed)/\(expected)")
+                break
+            }
+            if isChunked, hasTerminalChunk(in: chunk) {
+                NSLog("%@", "[PIIGuardProxy] Terminal chunk reached")
+                break
+            }
         }
+    }
+
+    private func prepareResponseHeaders(_ data: Data, head: HTTPResponseHead, bodyOffset: Int) -> (headers: Data, trailingBody: Data) {
+        let rawHeaderData = data.subdata(in: data.startIndex..<bodyOffset)
+        let trailingBody = data.subdata(in: bodyOffset..<data.endIndex)
+
+        guard let headerString = String(data: rawHeaderData, encoding: .utf8) else {
+            return (rawHeaderData, trailingBody)
+        }
+
+        let lines = headerString.components(separatedBy: "\r\n")
+        var filteredLines: [String] = []
+        for line in lines {
+            let lower = line.lowercased()
+            // Strip Alt-Svc so browsers don't try HTTP/3
+            if lower.hasPrefix("alt-svc:") { continue }
+            // Replace keep-alive Connection header with close so client knows connection terminates
+            if lower.hasPrefix("connection:") || lower.hasPrefix("proxy-connection:") { continue }
+            if !line.isEmpty {
+                filteredLines.append(line)
+            }
+        }
+        filteredLines.append("Connection: close")
+
+        let newHeaderString = filteredLines.joined(separator: "\r\n") + "\r\n\r\n"
+        let newHeaderData = newHeaderString.data(using: .utf8) ?? rawHeaderData
+        return (newHeaderData, trailingBody)
+    }
+
+    private func hasTerminalChunk(in data: Data) -> Bool {
+        let terminalWithPrefix = Data([0x0D, 0x0A, 0x30, 0x0D, 0x0A, 0x0D, 0x0A]) // \r\n0\r\n\r\n
+        let terminalAlone = Data([0x30, 0x0D, 0x0A, 0x0D, 0x0A]) // 0\r\n\r\n
+        return data.range(of: terminalWithPrefix) != nil || data.range(of: terminalAlone) != nil
+    }
+
+    private func relayBidirectional(_ a: TLSSocket, _ b: TLSSocket) {
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            while true {
+                guard let chunk = try? a.read(maxLength: 8192), !chunk.isEmpty else { break }
+                guard (try? b.write(chunk)) != nil else { break }
+            }
+            b.close()
+            group.leave()
+        }
+        group.enter()
+        DispatchQueue.global().async {
+            while true {
+                guard let chunk = try? b.read(maxLength: 8192), !chunk.isEmpty else { break }
+                guard (try? a.write(chunk)) != nil else { break }
+            }
+            a.close()
+            group.leave()
+        }
+        group.wait()
     }
 
     private func notify(host: String, providerName: String, outcome: TrafficEvent.Outcome, categories: [String], detectionPreviews: [String] = []) {
@@ -299,7 +458,7 @@ final class MITMProxyServer {
                 if chunk.isEmpty { break }
                 buffer.append(chunk)
             }
-            guard buffer.count >= bodyOffset + contentLength else { return (head, nil) }
+            guard buffer.count >= bodyOffset + contentLength else { return nil }
             let body = buffer.subdata(in: bodyOffset..<(bodyOffset + contentLength))
             return (head, body)
         } else if head.isChunked {
@@ -358,13 +517,23 @@ final class MITMProxyServer {
 
     private static func buildForwardedRequest(head: HTTPRequestHead, body: Data?) -> Data {
         var lines = ["\(head.method) \(head.target) \(head.httpVersion)"]
-        for (key, value) in head.headers where !["connection", "proxy-connection", "content-length", "transfer-encoding"].contains(key) {
+        let isWebSocket = head.headers["upgrade"]?.lowercased() == "websocket"
+        let stripped = isWebSocket ?
+            ["proxy-connection", "content-length", "transfer-encoding"] :
+            ["connection", "proxy-connection", "content-length", "transfer-encoding"]
+        for (key, value) in head.headers where !stripped.contains(key) {
             lines.append("\(key): \(value)")
+        }
+        if isWebSocket {
+            if head.headers["connection"] == nil {
+                lines.append("connection: Upgrade")
+            }
+        } else {
+            lines.append("connection: close")
         }
         if let body, !body.isEmpty {
             lines.append("content-length: \(body.count)")
         }
-        lines.append("connection: close")
         var data = (lines.joined(separator: "\r\n") + "\r\n\r\n").data(using: .utf8)!
         if let body { data.append(body) }
         return data
@@ -374,6 +543,11 @@ final class MITMProxyServer {
         let names = categories.joined(separator: ", ")
         let json = "{\"error\":{\"type\":\"piiguard_blocked\",\"message\":\"\(AppIdentity.displayName) blocked this message: detected \(names).\"}}"
         return httpResponse(status: "403 Forbidden", contentType: "application/json", body: json)
+    }
+
+    private static func badRequestResponse() -> Data {
+        let json = "{\"error\":{\"type\":\"piiguard_bad_request\",\"message\":\"\(AppIdentity.displayName) proxy only handles CONNECT tunnels. Configure your client to use HTTPS_PROXY, not HTTP_PROXY, for direct (non-tunnel) requests.\"}}"
+        return httpResponse(status: "400 Bad Request", contentType: "application/json", body: json)
     }
 
     private static func upstreamErrorResponse() -> Data {

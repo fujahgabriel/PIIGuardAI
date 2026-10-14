@@ -27,10 +27,30 @@ enum TrustStoreInstaller {
     /// `dump-trust-settings` (no `-d`, i.e. the user domain) lists a cert
     /// only once it actually carries trust settings, so a substring match on
     /// its output is a reliable, if blunt, signal.
-    static func isInstalled(commonName: String = CertificateAuthority.commonName) -> Bool {
+    /// True when the cert actually carries trust settings or is already verified as trusted.
+    static func isInstalled(certificateAt certificateURL: URL? = nil, commonName: String = CertificateAuthority.commonName) -> Bool {
+        if let certURL = certificateURL {
+            let verify = Process()
+            verify.executableURL = URL(fileURLWithPath: "/usr/bin/security")
+            verify.arguments = ["verify-cert", "-c", certURL.path]
+            verify.standardOutput = Pipe()
+            verify.standardError = Pipe()
+            if (try? verify.run()) != nil {
+                verify.waitUntilExit()
+                if verify.terminationStatus == 0 {
+                    return true
+                }
+            }
+        }
+        return carriesTrustSettings(commonName: commonName, userDomain: true) ||
+               carriesTrustSettings(commonName: commonName, userDomain: false)
+    }
+
+    private static func carriesTrustSettings(commonName: String, userDomain: Bool) -> Bool {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/security")
-        process.arguments = ["dump-trust-settings"]
+        // Note: in dump-trust-settings, -d displays user domain; default is admin cert store.
+        process.arguments = userDomain ? ["dump-trust-settings", "-d"] : ["dump-trust-settings"]
         let outPipe = Pipe()
         process.standardOutput = outPipe
         process.standardError = Pipe()
@@ -39,7 +59,17 @@ enum TrustStoreInstaller {
             let data = outPipe.fileHandleForReading.readDataToEndOfFile()
             process.waitUntilExit()
             guard process.terminationStatus == 0, let output = String(data: data, encoding: .utf8) else { return false }
-            return output.contains(commonName)
+            guard output.contains(commonName) else { return false }
+            let blocks = output.components(separatedBy: "Cert ")
+            for block in blocks where block.contains(commonName) {
+                if block.contains("Number of trust settings : 0") {
+                    return false
+                }
+                if block.contains("kSecTrustSettingsResultTrustRoot") || block.contains("kSecTrustSettingsResultTrustAsRoot") {
+                    return true
+                }
+            }
+            return false
         } catch {
             return false
         }
@@ -51,8 +81,8 @@ enum TrustStoreInstaller {
     /// first time -- callers can invoke this unconditionally on every
     /// protection start without re-prompting.
     static func install(certificateAt certificateURL: URL) throws {
-        guard !isInstalled() else { return }
-        try run(["add-trusted-cert", "-r", "trustRoot", "-k", loginKeychainPath, certificateURL.path])
+        guard !isInstalled(certificateAt: certificateURL) else { return }
+        try run(["add-trusted-cert", "-d", "-r", "trustRoot", "-k", loginKeychainPath, certificateURL.path])
     }
 
     static func remove(commonName: String = CertificateAuthority.commonName) throws {

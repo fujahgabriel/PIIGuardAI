@@ -14,9 +14,16 @@ struct PIIDetector {
         pattern: #"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)"#
     )
     private static let creditCardRegex = try! NSRegularExpression(
-        // Tightened: require 16-19 digits with optional single sep, start 3/4/5/6, not inside longer run. Luhn still checked.
-        pattern: #"(?<!\d)(?:3[47]\d[ -]?\d{6}[ -]?\d{5}|(?:4\d|5[1-5]|6\d)[ -]?(?:\d[ -]?){12,15})(?!\d)"#
+        // Two complementary patterns, both validated by the Luhn check below:
+        //  1. Explicit 4×4 groups (e.g. "4242 4242 4242 4242") — the most
+        //     common user-visible card format; listed first so it wins when
+        //     the dense pattern would mis-anchor on spaced input.
+        //  2. Dense run with one optional separator — for API-style 16-19
+        //     digit strings that may have no grouping at all.
+        // Amex (15-digit, 4-6-5) handled separately in the first branch.
+        pattern: #"(?<!\d)(?:[3-6]\d{3}[ -]\d{4}[ -]\d{4}[ -](?:\d{4}|\d{3})|3[47]\d[ -]?\d{6}[ -]?\d{5}|(?:4\d|5[1-5]|6\d)[ -]?(?:\d[ -]?){12,15})(?!\d)"#
     )
+
     private static let awsKeyRegex = try! NSRegularExpression(
         pattern: #"\bAKIA[0-9A-Z]{16}\b"#
     )
@@ -111,6 +118,9 @@ struct PIIDetector {
     /// dumping a whole .env file is risky regardless of which keys it holds.
     /// Not tied to one replaceable span, so it can't be auto-redacted --
     /// only blocked.
+    ///
+    /// Threshold is 5 (not 3) to avoid false positives from small multi-field
+    /// form bodies (e.g. 3-field curl --data payloads) or minimal test configs.
     private func scanForBulkEnvFile(_ text: String) -> PIIMatch? {
         guard enabledCategories.contains(.envFile) else { return nil }
         var matchingLines = 0
@@ -122,7 +132,7 @@ struct PIIDetector {
                 matchingLines += 1
             }
         }
-        guard matchingLines >= 3 else { return nil }
+        guard matchingLines >= 5 else { return nil }
         return PIIMatch(
             categoryName: PIICategory.envFile.displayName,
             redactedPreview: "\(matchingLines) env-style lines",

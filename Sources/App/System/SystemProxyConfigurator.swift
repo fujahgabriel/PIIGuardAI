@@ -56,6 +56,61 @@ enum SystemProxyConfigurator {
         return services.map { "networksetup -setautoproxystate \"\($0)\" off" }
     }
 
+    /// Attempts to configure auto-proxy directly via networksetup without privilege elevation.
+    /// On macOS, standard users often have authorization to modify network settings for their own Wi-Fi.
+    @discardableResult
+    static func setAutoProxyDirect(service: String, url: URL, enabled: Bool) -> Bool {
+        let p1 = Process()
+        p1.executableURL = URL(fileURLWithPath: "/usr/sbin/networksetup")
+        p1.arguments = ["-setautoproxyurl", service, url.absoluteString]
+        p1.standardOutput = Pipe()
+        p1.standardError = Pipe()
+        guard (try? p1.run()) != nil else { return false }
+        p1.waitUntilExit()
+        guard p1.terminationStatus == 0 else { return false }
+
+        let p2 = Process()
+        p2.executableURL = URL(fileURLWithPath: "/usr/sbin/networksetup")
+        p2.arguments = ["-setautoproxystate", service, enabled ? "on" : "off"]
+        p2.standardOutput = Pipe()
+        p2.standardError = Pipe()
+        guard (try? p2.run()) != nil else { return false }
+        p2.waitUntilExit()
+        return p2.terminationStatus == 0
+    }
+
+    @discardableResult
+    static func disableAutoProxyDirect(service: String) -> Bool {
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/usr/sbin/networksetup")
+        p.arguments = ["-setautoproxystate", service, "off"]
+        p.standardOutput = Pipe()
+        p.standardError = Pipe()
+        guard (try? p.run()) != nil else { return false }
+        p.waitUntilExit()
+        return p.terminationStatus == 0
+    }
+
+    /// Checks if any network service is still pointing to our local PAC server (58644)
+    /// while protection is off, and disables it to prevent broken network connections.
+    static func cleanOrphanedProxies() {
+        guard let services = try? activeNetworkServices() else { return }
+        for service in services {
+            let p = Process()
+            p.executableURL = URL(fileURLWithPath: "/usr/sbin/networksetup")
+            p.arguments = ["-getautoproxyurl", service]
+            let pipe = Pipe()
+            p.standardOutput = pipe
+            p.standardError = Pipe()
+            guard (try? p.run()) != nil else { continue }
+            p.waitUntilExit()
+            let out = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+            if out.contains("127.0.0.1:58644") && out.contains("Enabled: Yes") {
+                _ = disableAutoProxyDirect(service: service)
+            }
+        }
+    }
+
     // MARK: - Helper-client path (typed calls, no shell strings)
 
     /// The network services currently on, so the caller can point each one

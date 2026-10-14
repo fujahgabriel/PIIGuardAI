@@ -31,13 +31,80 @@ command-line tools (IDE agents, `curl`, scripts).
    - runs it through a local, on-device PII scanner (email, phone, SSN,
      credit card w/ Luhn check, AWS keys, generic API keys/secrets, IPv4,
      `.env`-style secrets/files) plus any custom keyword/regex rules you add
-   - if PII is found, **blocks it** (returns an HTTP 403 to the app/browser
-     and fires a macOS notification) instead of forwarding it
-   - otherwise opens a normal upstream TLS connection to the real provider
-     and relays the request/response through untouched
-4. Nothing scanned or blocked is sent anywhere else -- detection is 100%
+    - if PII is found, **blocks it** (returns an HTTP 403 to the app/browser
+      and fires a macOS notification) or **auto-redacts it** (replaces sensitive
+      values inline with `[REDACTED:<category>]` and seamlessly forwards the prompt
+      if Auto-Redaction mode is enabled)
+    - otherwise opens a normal upstream TLS connection to the real provider
+      and relays the request/response through untouched
+4. **Fast framed response relay & HTTP/3 bypass prevention:** Strips `Alt-Svc`
+   headers to prevent browsers from upgrading to UDP 443 (QUIC), which would
+   secretly bypass the TCP proxy. Uses framed HTTP/1.1 chunked and Content-Length
+   streaming so pages like `chatgpt.com` and `claude.ai` load smoothly and
+   instantly.
+5. **Resilient state & cleanup:** Protection state is saved across restarts.
+   If the app terminates, orphaned proxy settings are automatically cleaned up
+   so your internet connection is never left disabled.
+6. Nothing scanned or blocked is sent anywhere else -- detection is 100%
    local pattern matching, and the persisted activity log (Settings >
    Activity) stores only rule names and redacted previews, never raw PII.
+
+## Supported Environments
+
+PIIGuard AI protects sensitive data across three primary workflows via a dual-channel interception architecture:
+
+### 1. Web Browsers (Native & Automatic)
+* **Interception Mechanism**: macOS System Auto-Proxy pointing to a local PAC server (`http://127.0.0.1:58644/proxy.pac`).
+* **Supported Browsers**: Safari, Google Chrome, Arc, Brave, Microsoft Edge, Opera. *(Firefox requires enabling "Enterprise Roots" in `about:config`)*.
+* **Covered Domains**:
+  * Claude (`claude.ai`)
+  * ChatGPT (`chatgpt.com`, `chat.openai.com`)
+  * Gemini (`gemini.google.com`)
+  * Perplexity (`perplexity.ai`)
+  * Grok (`grok.com`)
+  * Custom domains added via **Settings > Providers**.
+* **Zero Latency for Normal Browsing**: Non-AI traffic (Google, YouTube, GitHub, internal networks, banking) bypasses the proxy entirely (`DIRECT`) with no overhead or latency.
+* **Seamless Trust**: The local root certificate is automatically installed into the macOS Keychain as trusted, preventing SSL warning screens.
+
+### 2. Command-Line Tools & Terminal (Full Automation)
+* **Interception Mechanism**: Standard CLI tools do not evaluate PAC files. PIIGuard AI manages standard proxy and TLS environment variables:
+  * `HTTP_PROXY` / `HTTPS_PROXY` (`http://127.0.0.1:58643`)
+  * `NODE_EXTRA_CA_CERTS` (Node.js runtime trust)
+  * `SSL_CERT_FILE` & `REQUESTS_CA_BUNDLE` (Python `requests`, `httpx`, `aiohttp`, etc.)
+  * `CURL_CA_BUNDLE` (`curl`)
+* **Shell Integration**:
+  * Automatically writes a managed environment file to `~/Library/Application Support/PIIGuard AI/env.sh`.
+  * Integrates a source hook into `~/.zshrc`, `~/.bashrc`, and `~/.config/fish/config.fish`.
+  * **Live Tab Injection**: Injects proxy variables directly into open Terminal tabs via AppleScript upon toggle—no shell restart required.
+  * Reverts cleanly: When toggled OFF, writes an `unset` file so terminal sessions immediately return to direct connections.
+* **Supported CLI Tools**:
+  * **Claude Code CLI** (`claude`)
+  * **OpenAI CLI / Codex**
+  * **Aider / OpenCode**
+  * **Custom Python & Node scripts** using LangChain, LiteLLM, or direct SDKs.
+
+### 3. IDEs & Coding Assistants (VS Code, Cursor, Windsurf, JetBrains)
+* **Interception Mechanism**:
+  * **User Session Environment**: PIIGuard executes `launchctl setenv` to export proxy and certificate environment variables across the user's macOS `launchd` session. GUI apps launched from Dock, Spotlight, or Finder inherit these settings.
+  * **Integrated Terminals**: Terminals opened inside VS Code, Cursor, Windsurf, or JetBrains automatically source the shell environment and route through the proxy.
+* **Covered API Endpoints**:
+  * Anthropic API (`api.anthropic.com`)
+  * OpenAI API (`api.openai.com`)
+  * Google AI (`generativelanguage.googleapis.com`)
+  * OpenRouter (`openrouter.ai`)
+  * Mistral (`api.mistral.ai`), Cohere (`api.cohere.ai`), xAI (`api.x.ai`)
+* **Extensions & Coding Agents**: AI coding assistants (e.g., Cline, Continue, Claude Code extensions) executing through Node or Python runtimes route their requests through the proxy.
+
+---
+
+### Detection & Protection Capabilities
+
+| Category | Patterns & Scanners |
+| :--- | :--- |
+| **Secrets & Credentials** | API Keys (OpenAI `sk-...`, Anthropic, GitHub `ghp_...`, Stripe `sk_live_...`, AWS `AKIA...`, Slack `xox...`), `.env` file dumps, passwords, and tokens. |
+| **Personal Identifiable Info** | Email addresses, phone numbers, Social Security Numbers (SSN), Credit Cards (with Luhn checksum validation), IPv4 addresses. |
+| **Custom Rules** | User-defined regex patterns and case-sensitive or insensitive keyword filters. |
+| **Protection Modes** | **Block Mode**: Rejects requests with HTTP 403 Forbidden and triggers a native macOS alert.<br>**Auto-Redact Mode**: Automatically substitutes PII with `[REDACTED:<category>]` in JSON bodies (e.g., `/v1/chat/completions`, `/v1/messages`) without breaking the conversation flow. |
 
 ## Why this architecture (and not a System Extension)
 
@@ -95,15 +162,15 @@ If you edit `project.yml`, re-run `xcodegen generate` before building.
 
 1. Run the app (from Xcode, or `open .../Debug/PIIGuard\ AI.app`). A shield
    icon appears in the menu bar.
-2. Click the icon, flip "Block PII to AI providers" on. macOS will ask you
-   to authenticate as an administrator -- this is what trusts the local CA
-   and turns on the PAC-based proxy for your active network service(s), and
-   also writes the CLI env file + shell integration.
+2. Click the icon, flip "Block PII to AI providers" on. The app trusts the
+   local CA into your login keychain and points the PAC-based proxy at your
+   active network service(s), and also writes the CLI env file + shell integration.
 3. Grant the notification permission prompt (for block alerts).
 4. **Browser test**: open claude.ai or chatgpt.com in a *fresh* tab and try
    sending a message that contains, e.g., a fake SSN (`123-45-6789`) or a
-   made-up email address. It should come back blocked, with a macOS
-   notification and an entry in Settings > Activity.
+   made-up email address. It should come back blocked (or redacted, if
+   Auto-Redact is enabled), with a macOS notification and an entry in
+   Settings > Activity.
 5. **CLI test**: open a *new* terminal window (existing ones have stale env)
    and run:
    ```sh
@@ -117,7 +184,7 @@ If you edit `project.yml`, re-run `xcodegen generate` before building.
 
 ## Known limitations (v1)
 
-- **Content-Length bodies only, mostly.** The scanner fully supports
+- **Content-Length and Chunked bodies supported.** The scanner fully supports
   `Content-Length` and `Transfer-Encoding: chunked` JSON request bodies.
   Compressed request bodies (`Content-Encoding: gzip`, rare for these chat
   APIs' request side) are forwarded **unscanned** and logged as such in the
@@ -139,9 +206,6 @@ If you edit `project.yml`, re-run `xcodegen generate` before building.
   its pinning check and stop working rather than being silently
   unprotected -- worth spot-checking if you rely on a specific desktop
   client.
-- **Admin password on every toggle.** `networksetup` requires admin rights
-  each time; there's no way around this without a signed privileged helper
-  tool (SMJobBless / a Background Task Management registered helper).
 
 ## Porting to a real System Extension later
 

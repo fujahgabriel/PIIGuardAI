@@ -147,6 +147,7 @@ final class TLSSocket {
 
     func close() {
         SSLClose(context)
+        shutdown(box.fd, SHUT_RDWR)
         Darwin.close(box.fd)
     }
 }

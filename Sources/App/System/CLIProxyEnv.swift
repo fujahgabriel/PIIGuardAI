@@ -67,8 +67,8 @@ enum CLIProxyEnv {
         let content = """
         # \(AppIdentity.displayName) — protection is OFF. This file unsets the proxy so CLIs go DIRECT.
         unset HTTP_PROXY; unset HTTPS_PROXY; unset http_proxy; unset https_proxy
-        # Keep CA bundle if you still want it, but unset to be clean:
-        # unset NODE_EXTRA_CA_CERTS; unset REQUESTS_CA_BUNDLE; unset CURL_CA_BUNDLE; unset SSL_CERT_FILE
+        unset NODE_EXTRA_CA_CERTS; unset REQUESTS_CA_BUNDLE; unset CURL_CA_BUNDLE; unset SSL_CERT_FILE
+        unset CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS
 
         """
         try content.write(to: url, atomically: true, encoding: .utf8)

@@ -5,6 +5,7 @@ import Security
 enum HelperClientError: Error {
     case blessFailed(String)
     case connectionFailed
+    case timedOut
     case helperError(String)
 }
 
@@ -13,6 +14,7 @@ extension HelperClientError: LocalizedError {
         switch self {
         case .blessFailed(let message): return "Could not install the privileged helper: \(message)"
         case .connectionFailed: return "Could not reach the privileged helper."
+        case .timedOut: return "The privileged helper did not respond in time. Try toggling protection again."
         case .helperError(let message): return message
         }
     }
@@ -136,7 +138,15 @@ final class HelperClient {
             semaphore.signal()
         }
 
-        _ = semaphore.wait(timeout: .now() + 15)
+        _ = semaphore.wait(timeout: .now() + 5)
+        if case .failure(HelperClientError.connectionFailed) = result {
+            // Distinguish a genuine timeout from an XPC connection error that
+            // also starts as .connectionFailed but replies synchronously.
+            // If the semaphore fired due to timeout the result is still the
+            // initial .failure(.connectionFailed) we seeded above and replied
+            // is still false.
+            if !replied { throw HelperClientError.timedOut }
+        }
         return try result.get()
     }
 }

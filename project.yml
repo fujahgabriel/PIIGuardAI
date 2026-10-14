@@ -30,6 +30,7 @@ targets:
         excludes:
           - Resources/Info.plist
           - Resources/App.entitlements
+      - path: Sources/App/Resources/Assets.xcassets
       - path: Sources/SharedWidgetData
       - path: Sources/HelperShared
     info:
@@ -67,6 +68,7 @@ targets:
         SWIFT_VERSION: "5.0"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         ENABLE_HARDENED_RUNTIME: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     dependencies:
       - target: PIIGuardWidget
         embed: true

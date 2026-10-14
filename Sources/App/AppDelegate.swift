@@ -13,6 +13,16 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     weak var appState: AppState?
 
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.piiguard.app"
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+        let otherApps = runningApps.filter { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }
+        if let existing = otherApps.first {
+            existing.activate(options: [.activateIgnoringOtherApps])
+            NSApp.terminate(nil)
+        }
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard let appState, appState.isProtecting else { return .terminateNow }
 

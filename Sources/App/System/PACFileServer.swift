@@ -30,7 +30,7 @@ final class PACFileServer {
     }
 
     func start() throws {
-        guard !isRunning else { return }
+        stop()
         let fd = try POSIXSocket.makeLoopbackListener(port: port)
         listenerFD = fd
         isRunning = true
