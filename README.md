@@ -1,8 +1,12 @@
 # PIIGuard AI
 
-A macOS menu bar app that blocks messages containing PII before they reach
-Claude, ChatGPT, Gemini, and other LLM providers -- from both browsers and
-command-line tools (IDE agents, `curl`, scripts).
+A macOS menu bar app that blocks messages containing PII before they reach Claude, ChatGPT, Gemini, DeepSeek, and other LLM providers — from both browsers and command-line tools (IDE agents, `opencode`, `claude code`, `curl`, scripts).
+
+<p align="center">
+  <img src="assets/menubar.png" alt="PIIGuard AI Menu Bar Popover" width="280" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/activity.png" alt="PIIGuard AI Activity and Analytics" width="560" />
+</p>
 
 ## How it works
 
@@ -13,7 +17,7 @@ command-line tools (IDE agents, `curl`, scripts).
 2. **Scoped interception.**
    - *Browsers*: a PAC (Proxy Auto-Config) file routes *only* the known LLM
      provider domains (`claude.ai`, `api.anthropic.com`, `chatgpt.com`,
-     `api.openai.com`, `generativelanguage.googleapis.com`, etc. -- see
+     `api.openai.com`, `api.deepseek.com`, `generativelanguage.googleapis.com`, etc. -- see
      Providers tab) through a local proxy on `127.0.0.1`. Everything else on
      your Mac goes `DIRECT` and is never touched.
    - *CLI tools*: browsers honor the system PAC automatically, but `curl`,
@@ -80,8 +84,12 @@ PIIGuard AI protects sensitive data across three primary workflows via a dual-ch
 * **Supported CLI Tools**:
   * **Claude Code CLI** (`claude`)
   * **OpenAI CLI / Codex**
-  * **Aider / OpenCode**
+  * **OpenCode / Aider** (e.g. DeepSeek, Claude, GPT models)
   * **Custom Python & Node scripts** using LangChain, LiteLLM, or direct SDKs.
+
+<p align="center">
+  <img src="assets/opencode.png" alt="OpenCode CLI Interception" width="560" />
+</p>
 
 ### 3. IDEs & Coding Assistants (VS Code, Cursor, Windsurf, JetBrains)
 * **Interception Mechanism**:
